@@ -186,13 +186,13 @@ class DynamicFormBuilder extends React.Component {
             value = this.applyTransformer(event, input.transformer.onChange);
         }
 
-        if (input.validation_rules) {
+        if (input.validationRules) {
             // The third parameter, true, means that the input will not show as invalid
             // while the user is typing
-            validation_errors = this.applyValidation(event, input.validation_rules, true);
+            validation_errors = this.applyValidation(event, input.validationRules, true);
 
             this.timer = setTimeout(() => {
-                this.applyValidation(event, input.validation_rules)
+                this.applyValidation(event, input.validationRules)
             }, this.props.validationTimeout || 1000);
         }
 
@@ -382,8 +382,9 @@ DynamicFormBuilder.propTypes = {
     defaultContainerClass: PropTypes.string,
     defaultValidationErrorClass: PropTypes.string,
     defaultValues: PropTypes.object,
-    form: PropTypes.arrayOf(PropTypes.Object).isRequired,
+    form: PropTypes.arrayOf(PropTypes.object).isRequired,
     submitButton: PropTypes.object,
     validationTimeout: PropTypes.number,
+    validationRules: PropTypes.array,
     classPrefix: PropTypes.string
 };
