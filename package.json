@@ -1,0 +1,36 @@
+{
+  "name": "@langleyfoxall/dynamic-form-builder",
+  "version": "1.0.0",
+  "description": "A form builder for React that allows input filters, transformers and validators as well as custom input rendering",
+  "main": "dist/DynamicFormBuilder.js",
+  "scripts": {
+    "test": "echo \"No tests.\" && exit 0",
+    "build": "node ./node_modules/@babel/cli/bin/babel src/ --out-dir dist/",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langleyfoxall/react-dynamic-form-builder.git"
+  },
+  "keywords": [
+    "form",
+    "form",
+    "builder"
+  ],
+  "author": "Niles Butler <niles@langleyfoxall.co.uk>",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/langleyfoxall/react-dynamic-form-builder/issues"
+  },
+  "homepage": "https://github.com/langleyfoxall/react-dynamic-form-builder#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/preset-react": "^7.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "prop-types": "^15.6.2"
+  }
+}
