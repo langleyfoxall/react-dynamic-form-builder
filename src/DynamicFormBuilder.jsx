@@ -335,7 +335,7 @@ class DynamicFormBuilder extends React.Component {
         if (this.props.submitButton) {
             return (
                 <button
-                    className={`${this.props.classPrefix}-${this.props.submitButton.className} ${this.validateForm(false) ? '' : 'invalid'}`}
+                    className={`${this.props.classPrefix}-${this.props.submitButton.className || this.props.defaultSubmitClass || ''} ${this.validateForm(false) ? '' : 'invalid'} ${this.props.loading ? 'loading' : ''}`}
                     onClick={this.submitForm}
                 >
                     {this.props.submitButton.text}
@@ -379,7 +379,9 @@ DynamicFormBuilder.defaultProps = {
     defaultContainerClass: 'container',
     defaultInputClass: 'input',
     defaultValidationErrorClass: 'error-label',
-    defaultLabelClass: 'label'
+    defaultLabelClass: 'label',
+    form: [],
+    defaultSubmitClass: 'submit'
 };
 
 DynamicFormBuilder.propTypes = {
@@ -391,5 +393,7 @@ DynamicFormBuilder.propTypes = {
     form: PropTypes.arrayOf(PropTypes.object).isRequired,
     submitButton: PropTypes.object,
     validationTimeout: PropTypes.number,
-    classPrefix: PropTypes.string
+    classPrefix: PropTypes.string,
+    loading: PropTypes.bool,
+    defaultSubmitClass: PropTypes.string
 };
