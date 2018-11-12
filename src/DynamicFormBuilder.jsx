@@ -212,8 +212,8 @@ class DynamicFormBuilder extends React.Component {
             value = this.applyTransformer(event, input.transformer.onBlur);
         }
 
-        if (input.validation_rules) {
-            validation_errors = this.applyValidation(event, input.validation_rules);
+        if (input.validationRules) {
+            validation_errors = this.applyValidation(event, input.validationRules);
         }
 
         if (this.state.form[event.target.name] !== value) {
@@ -229,11 +229,11 @@ class DynamicFormBuilder extends React.Component {
         let validation_errors = this.state.validation_errors;
 
         this.props.form.forEach((input) => {
-            if (!input.validation_rules) {
+            if (!input.validationRules) {
                 return;
             }
 
-            let [valid, validation_error] = this.validateInput(input.name, this.state.form[input.name], input.validation_rules);
+            let [valid, validation_error] = this.validateInput(input.name, this.state.form[input.name], input.validationRules);
 
             validation_errors = {...validation_errors, ...validation_error};
 
