@@ -1,5 +1,5 @@
 {
-  "name": "@langleyfoxall/dynamic-form-builder",
+  "name": "@langleyfoxall/react-dynamic-form-builder",
   "version": "1.0.0",
   "description": "A form builder for React that allows input filters, transformers and validators as well as custom input rendering",
   "main": "dist/DynamicFormBuilder.js",
