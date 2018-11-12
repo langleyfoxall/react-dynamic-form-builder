@@ -385,6 +385,5 @@ DynamicFormBuilder.propTypes = {
     form: PropTypes.arrayOf(PropTypes.object).isRequired,
     submitButton: PropTypes.object,
     validationTimeout: PropTypes.number,
-    validationRules: PropTypes.array,
     classPrefix: PropTypes.string
 };
