@@ -345,23 +345,29 @@ class DynamicFormBuilder extends React.Component {
     }
 
     render() {
-        return (
-            <Fragment>
-                {this.props.form.map((input, i) => {
-                    return (
-                        <Fragment key={i}>
-                            <div
-                                className={`${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`}>
-                                {this.renderLabel(input)}
-                                {this.renderInput(input)}
-                                {this.renderValidationErrors(input)}
-                            </div>
-                        </Fragment>
-                    )
-                })}
-                {this.renderSubmitButton()}
-            </Fragment>
-        )
+        try {
+            return (
+                <Fragment>
+                    {this.props.form.map((input, i) => {
+                        return (
+                            <Fragment key={i}>
+                                <div
+                                    className={`${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`}>
+                                    {this.renderLabel(input)}
+                                    {this.renderInput(input)}
+                                    {this.renderValidationErrors(input)}
+                                </div>
+                            </Fragment>
+                        )
+                    })}
+                    {this.renderSubmitButton()}
+                </Fragment>
+            )
+        } catch (e) {
+            return (
+                <p>Error rendering form</p>
+            )
+        }
     }
 }
 

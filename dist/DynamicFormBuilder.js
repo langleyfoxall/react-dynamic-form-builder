@@ -337,13 +337,17 @@ class DynamicFormBuilder extends React.Component {
   }
 
   render() {
-    return React.createElement(Fragment, null, this.props.form.map((input, i) => {
-      return React.createElement(Fragment, {
-        key: i
-      }, React.createElement("div", {
-        className: `${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`
-      }, this.renderLabel(input), this.renderInput(input), this.renderValidationErrors(input)));
-    }), this.renderSubmitButton());
+    try {
+      return React.createElement(Fragment, null, this.props.form.map((input, i) => {
+        return React.createElement(Fragment, {
+          key: i
+        }, React.createElement("div", {
+          className: `${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`
+        }, this.renderLabel(input), this.renderInput(input), this.renderValidationErrors(input)));
+      }), this.renderSubmitButton());
+    } catch (e) {
+      return React.createElement("p", null, "Error rendering form");
+    }
   }
 
 }
