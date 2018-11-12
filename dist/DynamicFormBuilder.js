@@ -1,5 +1,9 @@
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
@@ -7,8 +11,7 @@ class DynamicFormBuilder extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: { ...this.props.defaultValues
-      },
+      form: _objectSpread({}, this.props.defaultValues),
       validation_errors: {}
     };
     this.filterRules = {
@@ -152,9 +155,7 @@ class DynamicFormBuilder extends React.Component {
   applyValidation(event, validation, only_display_if_valid = false) {
     let validation_errors;
     let [valid, validation_error] = this.validateInput(event.target.name, event.target.value, validation);
-    validation_errors = { ...this.state.validation_errors,
-      ...validation_error
-    };
+    validation_errors = _objectSpread({}, this.state.validation_errors, validation_error);
 
     if (only_display_if_valid && valid || !only_display_if_valid) {
       this.setState({
@@ -239,9 +240,7 @@ class DynamicFormBuilder extends React.Component {
       }
 
       let [valid, validation_error] = this.validateInput(input.name, this.state.form[input.name], input.validationRules);
-      validation_errors = { ...validation_errors,
-        ...validation_error
-      };
+      validation_errors = _objectSpread({}, validation_errors, validation_error);
 
       if (!valid) {
         invalid = true;
@@ -272,16 +271,15 @@ class DynamicFormBuilder extends React.Component {
   }
 
   renderInput(input) {
-    const props = {
+    const props = _objectSpread({
       className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] ? 'invalid' : ''}`,
       name: input.name,
       value: this.state.form[input.name] || input.defaultValue || '',
       placeholder: input.placeholder,
       id: input.name,
       onChange: this.handleInput.bind(this, input),
-      onBlur: this.handleBlur.bind(this, input),
-      ...input.htmlProps
-    };
+      onBlur: this.handleBlur.bind(this, input)
+    }, input.htmlProps);
 
     switch (input.type) {
       case "custom":
