@@ -324,7 +324,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     renderValidationErrors(input) {
-        if (this.state.validation_errors[input.name] !== true) {
+        if (this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true) {
             return (
                 <p className={`${this.props.classPrefix}-${this.props.defaultValidationErrorClass || ''}`}>{this.state.validation_errors[input.name]}</p>
             )
