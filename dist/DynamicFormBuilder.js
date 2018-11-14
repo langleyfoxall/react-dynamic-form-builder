@@ -293,7 +293,11 @@ class DynamicFormBuilder extends React.Component {
         return React.createElement("textarea", props);
 
       case "select":
-        return React.createElement("select", props, input.options.map(option => {
+        return React.createElement("select", props, input.defaultOptionText && React.createElement("option", {
+          hidden: true,
+          selected: true,
+          value: true
+        }, input.defaultOptionText), input.options.map(option => {
           return React.createElement("option", {
             value: option.value
           }, option.text);

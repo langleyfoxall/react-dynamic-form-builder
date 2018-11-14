@@ -292,6 +292,9 @@ class DynamicFormBuilder extends React.Component {
             case("select"):
                 return (
                     <select {...props} >
+                        { input.defaultOptionText && (
+                            <option hidden selected value>{input.defaultOptionText}</option>
+                        )}
                         {input.options.map((option) => {
                             return <option value={option.value}>{option.text}</option>
                         })}
