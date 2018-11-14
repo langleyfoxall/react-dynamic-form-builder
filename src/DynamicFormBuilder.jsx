@@ -267,6 +267,10 @@ class DynamicFormBuilder extends React.Component {
 
     renderInput(input) {
 
+        if(input.constructor === Array){
+            return this.renderInputs(input);
+        }
+
         const props = {
             className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] ? this.props.invalidInputClass : ''}`,
             name: input.name,
@@ -284,6 +288,14 @@ class DynamicFormBuilder extends React.Component {
             case("textarea"):
                 return (
                     <textarea {...props} />
+                );
+            case("select"):
+                return (
+                    <select {...props} >
+                        {input.options.map((option) => {
+                            return <option value={option.value}>{option.text}</option>
+                        })}
+                    </select>
                 );
             case("radio"):
                 return (
@@ -344,22 +356,32 @@ class DynamicFormBuilder extends React.Component {
         }
     }
 
+    renderInputs(inputs) {
+        return (
+            <Fragment>
+                {inputs.map((input, i) => {
+                    const containerClass = input.constructor === Array ?
+                        `${this.props.classPrefix}-row` :
+                        `${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`;
+                    return (
+                        <Fragment key={i}>
+                            <div className={containerClass}>
+                                {this.renderLabel(input)}
+                                {this.renderInput(input)}
+                                {this.renderValidationErrors(input)}
+                            </div>
+                        </Fragment>
+                    )
+                })}
+            </Fragment>
+        )
+    }
+
     render() {
         try {
             return (
                 <Fragment>
-                    {this.props.form.map((input, i) => {
-                        return (
-                            <Fragment key={i}>
-                                <div
-                                    className={`${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`}>
-                                    {this.renderLabel(input)}
-                                    {this.renderInput(input)}
-                                    {this.renderValidationErrors(input)}
-                                </div>
-                            </Fragment>
-                        )
-                    })}
+                    {this.renderInputs(this.props.form)}
                     {this.renderSubmitButton()}
                 </Fragment>
             )
@@ -391,7 +413,7 @@ DynamicFormBuilder.propTypes = {
     defaultContainerClass: PropTypes.string,
     defaultValidationErrorClass: PropTypes.string,
     defaultValues: PropTypes.object,
-    form: PropTypes.arrayOf(PropTypes.object).isRequired,
+    form: PropTypes.array.isRequired,
     submitButton: PropTypes.object,
     validationTimeout: PropTypes.number,
     classPrefix: PropTypes.string,

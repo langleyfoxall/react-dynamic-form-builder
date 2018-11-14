@@ -271,6 +271,10 @@ class DynamicFormBuilder extends React.Component {
   }
 
   renderInput(input) {
+    if (input.constructor === Array) {
+      return this.renderInputs(input);
+    }
+
     const props = _objectSpread({
       className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] ? this.props.invalidInputClass : ''}`,
       name: input.name,
@@ -287,6 +291,13 @@ class DynamicFormBuilder extends React.Component {
 
       case "textarea":
         return React.createElement("textarea", props);
+
+      case "select":
+        return React.createElement("select", props, input.options.map(option => {
+          return React.createElement("option", {
+            value: option.value
+          }, option.text);
+        }));
 
       case "radio":
         return React.createElement(Fragment, null, input.options.map((option, i) => {
@@ -334,15 +345,20 @@ class DynamicFormBuilder extends React.Component {
     }
   }
 
+  renderInputs(inputs) {
+    return React.createElement(Fragment, null, inputs.map((input, i) => {
+      const containerClass = input.constructor === Array ? `${this.props.classPrefix}-row` : `${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`;
+      return React.createElement(Fragment, {
+        key: i
+      }, React.createElement("div", {
+        className: containerClass
+      }, this.renderLabel(input), this.renderInput(input), this.renderValidationErrors(input)));
+    }));
+  }
+
   render() {
     try {
-      return React.createElement(Fragment, null, this.props.form.map((input, i) => {
-        return React.createElement(Fragment, {
-          key: i
-        }, React.createElement("div", {
-          className: `${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`
-        }, this.renderLabel(input), this.renderInput(input), this.renderValidationErrors(input)));
-      }), this.renderSubmitButton());
+      return React.createElement(Fragment, null, this.renderInputs(this.props.form), this.renderSubmitButton());
     } catch (e) {
       return React.createElement("p", null, "Error rendering form");
     }
@@ -368,7 +384,7 @@ DynamicFormBuilder.propTypes = {
   defaultContainerClass: PropTypes.string,
   defaultValidationErrorClass: PropTypes.string,
   defaultValues: PropTypes.object,
-  form: PropTypes.arrayOf(PropTypes.object).isRequired,
+  form: PropTypes.array.isRequired,
   submitButton: PropTypes.object,
   validationTimeout: PropTypes.number,
   classPrefix: PropTypes.string,
