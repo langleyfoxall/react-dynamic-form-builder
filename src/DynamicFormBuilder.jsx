@@ -228,7 +228,7 @@ class DynamicFormBuilder extends React.Component {
         let invalid = false;
         let validation_errors = this.state.validation_errors;
 
-        this.props.form.forEach((input) => {
+        this.props.form.flat().forEach((input) => {
             if (!input.validationRules) {
                 return;
             }
