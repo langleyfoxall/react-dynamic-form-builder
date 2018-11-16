@@ -297,7 +297,7 @@ class DynamicFormBuilder extends React.Component {
           hidden: true,
           selected: true,
           value: true
-        }, input.defaultOptionText), input.options.map(option => {
+        }, input.defaultOptionText), (input.options || []).map(option => {
           return React.createElement("option", {
             value: option.value
           }, option.text);
