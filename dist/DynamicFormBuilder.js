@@ -17,6 +17,9 @@ class DynamicFormBuilder extends React.Component {
     this.filterRules = {
       numeric: value => {
         return /^$|^[0-9]+$/.test(value);
+      },
+      decimal: value => {
+        return /^$|^(?:\d+)?.?\d+$/.test(value);
       }
     };
     this.transformerRules = {
@@ -37,6 +40,9 @@ class DynamicFormBuilder extends React.Component {
       },
       email: value => {
         return /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
+      },
+      decimal: value => {
+        return /^$|^(?:\d+)?.?\d+$/.test(value);
       }
     };
     this.validateForm = this.validateForm.bind(this);
