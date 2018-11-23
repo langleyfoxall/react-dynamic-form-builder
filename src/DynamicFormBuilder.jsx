@@ -7,7 +7,7 @@ class DynamicFormBuilder extends React.Component {
         super(props);
 
         this.state = {
-            form: {...this.props.defaultValues},
+            form: {...props.defaultValues},
             validation_errors: {}
         };
 
@@ -289,6 +289,10 @@ class DynamicFormBuilder extends React.Component {
                 return (
                     <textarea {...props} />
                 );
+            case("checkbox"):
+                return (
+                    <input {...props} type={input.type} value={props.value === "true" ? "false" : "true"} onBlur={undefined} checked={props.value === "true"} />
+                );
             case("select"):
                 return (
                     <select {...props} >
@@ -320,7 +324,7 @@ class DynamicFormBuilder extends React.Component {
                 );
             default:
                 return (
-                    <input type={input.type} {...props} />
+                    <input type={input.type} {...props}  />
                 )
         }
     }

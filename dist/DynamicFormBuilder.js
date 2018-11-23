@@ -11,7 +11,7 @@ class DynamicFormBuilder extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: _objectSpread({}, this.props.defaultValues),
+      form: _objectSpread({}, props.defaultValues),
       validation_errors: {}
     };
     this.filterRules = {
@@ -291,6 +291,14 @@ class DynamicFormBuilder extends React.Component {
 
       case "textarea":
         return React.createElement("textarea", props);
+
+      case "checkbox":
+        return React.createElement("input", _extends({}, props, {
+          type: input.type,
+          value: props.value === "true" ? "false" : "true",
+          onBlur: undefined,
+          checked: props.value === "true"
+        }));
 
       case "select":
         return React.createElement("select", props, input.defaultOptionText && React.createElement("option", {
