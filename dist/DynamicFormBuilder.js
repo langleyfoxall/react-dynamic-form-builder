@@ -386,6 +386,7 @@ class DynamicFormBuilder extends React.Component {
     try {
       return React.createElement(Fragment, null, this.renderInputs(this.props.form), this.renderSubmitButton());
     } catch (e) {
+      console.error(e);
       return React.createElement("p", null, "Error rendering form");
     }
   }

@@ -407,6 +407,7 @@ class DynamicFormBuilder extends React.Component {
                 </Fragment>
             )
         } catch (e) {
+            console.error(e);
             return (
                 <p>Error rendering form</p>
             )
