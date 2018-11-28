@@ -19,7 +19,7 @@ class DynamicFormBuilder extends React.Component {
         return /^$|^[0-9]+$/.test(value);
       },
       decimal: value => {
-        return /^$|^(?:\d+)?.?\d+$/.test(value);
+        return /^$|^[\d.]+$/.test(value);
       }
     };
     this.transformerRules = {
@@ -42,7 +42,7 @@ class DynamicFormBuilder extends React.Component {
         return /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
       },
       decimal: value => {
-        return /^$|^(?:\d+)?.?\d+$/.test(value);
+        return /^$|^\d+$|^\.\d+|^\d+\.\d+$/.test(value);
       }
     };
     this.validateForm = this.validateForm.bind(this);
@@ -282,7 +282,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     const props = _objectSpread({
-      className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] ? this.props.invalidInputClass : ''}`,
+      className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : ''}`,
       name: input.name,
       value: this.state.form[input.name] || input.defaultValue || '',
       placeholder: input.placeholder,
@@ -347,10 +347,12 @@ class DynamicFormBuilder extends React.Component {
   }
 
   renderValidationErrors(input) {
-    if (this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true) {
+    const validationError = this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true ? this.state.validation_errors[input.name] : this.props.formErrors[input.name];
+
+    if (validationError) {
       return React.createElement("p", {
         className: `${this.props.classPrefix}-${this.props.defaultValidationErrorClass || ''}`
-      }, this.state.validation_errors[input.name]);
+      }, validationError);
     }
   }
 
@@ -405,7 +407,8 @@ DynamicFormBuilder.defaultProps = {
   defaultSubmitClass: 'submit',
   invalidInputClass: 'invalid',
   loading: false,
-  loadingElement: null
+  loadingElement: null,
+  formErrors: {}
 };
 DynamicFormBuilder.propTypes = {
   defaultInputClass: PropTypes.string,
@@ -420,5 +423,6 @@ DynamicFormBuilder.propTypes = {
   loading: PropTypes.bool,
   defaultSubmitClass: PropTypes.string,
   invalidInputClass: PropTypes.string,
-  loadingElement: PropTypes.element
+  loadingElement: PropTypes.element,
+  formErrors: PropTypes.object
 };

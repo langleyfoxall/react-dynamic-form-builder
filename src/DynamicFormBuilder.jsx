@@ -278,7 +278,7 @@ class DynamicFormBuilder extends React.Component {
         }
 
         const props = {
-            className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] ? this.props.invalidInputClass : ''}`,
+            className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : ''}`,
             name: input.name,
             value: this.state.form[input.name] || input.defaultValue || '',
             placeholder: input.placeholder,
@@ -349,9 +349,10 @@ class DynamicFormBuilder extends React.Component {
     }
 
     renderValidationErrors(input) {
-        if (this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true) {
+        const validationError = (this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true) ? this.state.validation_errors[input.name] : this.props.formErrors[input.name];
+        if (validationError) {
             return (
-                <p className={`${this.props.classPrefix}-${this.props.defaultValidationErrorClass || ''}`}>{this.state.validation_errors[input.name]}</p>
+                <p className={`${this.props.classPrefix}-${this.props.defaultValidationErrorClass || ''}`}>{validationError}</p>
             )
         }
     }
@@ -429,6 +430,7 @@ DynamicFormBuilder.defaultProps = {
     invalidInputClass: 'invalid',
     loading: false,
     loadingElement: null,
+    formErrors: {},
 };
 
 DynamicFormBuilder.propTypes = {
@@ -445,4 +447,5 @@ DynamicFormBuilder.propTypes = {
     defaultSubmitClass: PropTypes.string,
     invalidInputClass: PropTypes.string,
     loadingElement: PropTypes.element,
+    formErrors: PropTypes.object,
 };
