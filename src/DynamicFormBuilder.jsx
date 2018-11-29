@@ -278,7 +278,7 @@ class DynamicFormBuilder extends React.Component {
         }
 
         const props = {
-            className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : this.state.validation_errors[input.name] === false ? 'input-valid' : ''}`,
+            className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : this.state.validation_errors[input.name] === false ? this.props.validInputClass : ''}`,
             name: input.name,
             value: this.state.form[input.name] || input.defaultValue || '',
             placeholder: input.placeholder,
@@ -428,6 +428,7 @@ DynamicFormBuilder.defaultProps = {
     form: [],
     defaultSubmitClass: 'submit',
     invalidInputClass: 'invalid',
+    validInputClass: 'valid',
     loading: false,
     loadingElement: null,
     formErrors: {},
@@ -446,6 +447,7 @@ DynamicFormBuilder.propTypes = {
     loading: PropTypes.bool,
     defaultSubmitClass: PropTypes.string,
     invalidInputClass: PropTypes.string,
+    validInputClass: PropTypes.string,
     loadingElement: PropTypes.element,
     formErrors: PropTypes.object,
 };
