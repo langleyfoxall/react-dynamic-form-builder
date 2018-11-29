@@ -282,7 +282,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     const props = _objectSpread({
-      className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : ''}`,
+      className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : this.state.validation_errors[input.name] === false ? 'input-valid' : ''}`,
       name: input.name,
       value: this.state.form[input.name] || input.defaultValue || '',
       placeholder: input.placeholder,
