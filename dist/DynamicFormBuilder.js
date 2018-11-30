@@ -293,7 +293,7 @@ class DynamicFormBuilder extends React.Component {
 
     switch (input.type) {
       case "custom":
-        return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.state.validation_errors[input.name]);
+        return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.state.validation_errors[input.name], this.state);
 
       case "textarea":
         return React.createElement("textarea", props);
