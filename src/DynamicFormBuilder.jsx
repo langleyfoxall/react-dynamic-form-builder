@@ -188,6 +188,10 @@ class DynamicFormBuilder extends React.Component {
 
         let value = event.target.value;
 
+        if (input.type === 'checkbox') {
+            value = event.target.checked;
+        }
+
         if (input.transformer && input.transformer.onChange) {
             value = this.applyTransformer(event, input.transformer.onChange);
         }
@@ -297,7 +301,7 @@ class DynamicFormBuilder extends React.Component {
                 );
             case("checkbox"):
                 return (
-                    <input {...props} type={input.type} value={props.value === "true" ? "false" : "true"} onBlur={undefined} checked={props.value === "true"} />
+                    <input {...props} type={input.type} onBlur={undefined} defaultChecked={props.defaultValue} checked={props.value} />
                 );
             case("select"):
                 return (
