@@ -33,7 +33,7 @@ Builder, check out the [live demo](https://langleyfoxall.github.io/react-dynamic
 
 ### Props
 
-### Form
+#### Form
 
 The `form` prop expect an array that represents the fields to display within the form.
 This is the main JSON configuration that is used to display, validate and transform
@@ -89,7 +89,7 @@ The following example shows the expected format of the array passed to this prop
 ```
 
 
-### Submit Button
+#### Submit Button
 
 The `submitButton` prop expects an object in the following format.
 
@@ -100,15 +100,15 @@ The `submitButton` prop expects an object in the following format.
 }
 ```
 
-### Loading
+#### Loading
 
 The `loading` prop expects a boolean indicating whether the form should display a loading
-message. If set to `true`, a loading message is displayed in place of the submit button. 
-If set to `false`, the form is displayed normally.
+state. If set to `true`, a `loading` class is applied to the submit button. 
 
-To use the `loading` prop, you must have also set the `loadingElement` prop.
+Alternatively, you can replace the submit button entirely when `loading` is set to true.
+To do this, you must also set the `loadingElement` prop.
 
-### Loading Element
+#### Loading Element
 
 The `loadingElement` prop expects an element which will be rendered instead of the submit
 button if the `loading` prop is set to `true`.
