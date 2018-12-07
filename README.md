@@ -4,7 +4,7 @@ This package provide a React component that allows developers to quickly build
 fully featured forms from a simple JSON configuration.
 
 <p align="center">
-    <img width="500" src="https://user-images.githubusercontent.com/650645/49640681-17274f00-fa06-11e8-8179-25bbc0246790.png"/>
+    <img width="700" src="https://user-images.githubusercontent.com/650645/49640681-17274f00-fa06-11e8-8179-25bbc0246790.png"/>
 </p>
 
 ## Features
