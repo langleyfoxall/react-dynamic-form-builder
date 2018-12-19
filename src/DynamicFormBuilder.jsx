@@ -1,6 +1,5 @@
 import React, {Fragment} from 'react';
 import PropTypes from 'prop-types';
-import flatten from "core-js/fn/array/flatten";
 
 class DynamicFormBuilder extends React.Component {
 
@@ -239,7 +238,7 @@ class DynamicFormBuilder extends React.Component {
         let invalid = false;
         let validation_errors = this.state.validation_errors;
 
-        flatten(this.props.form).forEach((input) => {
+        this.props.form.flat().forEach((input) => {
             if (!input.validationRules) {
                 return;
             }
