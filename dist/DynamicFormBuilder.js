@@ -6,6 +6,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import flatten from "core-js/fn/array/flatten";
 
 class DynamicFormBuilder extends React.Component {
   constructor(props) {
@@ -244,7 +245,7 @@ class DynamicFormBuilder extends React.Component {
   validateForm(display = true) {
     let invalid = false;
     let validation_errors = this.state.validation_errors;
-    this.props.form.flat().forEach(input => {
+    flatten(this.props.form).forEach(input => {
       if (!input.validationRules) {
         return;
       }
