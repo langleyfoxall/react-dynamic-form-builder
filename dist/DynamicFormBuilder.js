@@ -458,11 +458,17 @@ function (_React$Component) {
   }, {
     key: "renderLabel",
     value: function renderLabel(input) {
+      var props = {
+        className: this.props.classPrefix + '-' + (input.label.className || this.props.defaultLabelClass || ''),
+        htmlFor: input.name
+      };
+
+      if (typeof input.label === 'function') {
+        return input.label(props);
+      }
+
       if (input.label) {
-        return _react.default.createElement("label", {
-          className: "".concat(this.props.classPrefix, "-").concat(input.label.className || this.props.defaultLabelClass || ''),
-          htmlFor: input.name
-        }, input.label.text || input.label);
+        return _react.default.createElement("label", props, input.label.text || input.label);
       }
     }
   }, {
