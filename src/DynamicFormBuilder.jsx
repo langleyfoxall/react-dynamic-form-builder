@@ -341,6 +341,10 @@ class DynamicFormBuilder extends React.Component {
     }
 
     renderLabel(input) {
+        if (!input.label) {
+            return;
+        }
+
         const props = {
             className: this.props.classPrefix + '-' + (input.label.className || this.props.defaultLabelClass || ''),
             htmlFor: input.name
