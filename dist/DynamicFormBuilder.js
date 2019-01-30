@@ -458,6 +458,10 @@ function (_React$Component) {
   }, {
     key: "renderLabel",
     value: function renderLabel(input) {
+      if (!input.label) {
+        return;
+      }
+
       var props = {
         className: this.props.classPrefix + '-' + (input.label.className || this.props.defaultLabelClass || ''),
         htmlFor: input.name
