@@ -82,6 +82,8 @@ yarn add @langleyfoxall/react-dynamic-form-builder
 
 ## Basic Example
 
+Check out the [demo][demo].
+
 ```jsx
 // ./forms/create-user.js
 export default [
@@ -155,7 +157,7 @@ export default CreateUserModal;
 
 ## Usage
 
-`form-builder` makes it easier to create dynamic react forms by handling most of the logic involved. Check out the [demo][demo].
+`form-builder` makes it easier to create dynamic react forms by handling most of the logic involved.
 
 ### Props
 
