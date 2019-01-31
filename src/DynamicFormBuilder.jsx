@@ -1,49 +1,43 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+
 import flatten from "core-js/fn/array/flatten";
 
 class DynamicFormBuilder extends React.Component {
-
     constructor(props) {
         super(props);
 
         this.state = {
-            form: {...props.defaultValues},
-            validation_errors: {}
+            form: { ...props.defaultValues },
+            validationErrors: {},
         };
 
         this.filterRules = {
-            numeric: (value) => {
-                return /^$|^[0-9]+$/.test(value)
-            },
-            decimal: (value) => {
-                return /^$|^[\d.]+$/.test(value)
-            }
+            numeric: value => (
+                /^$|^[0-9]+$/.test(value)
+            ),
+            decimal: value => (
+                /^$|^[\d.]+$/.test(value)
+            ),
         };
 
         this.transformerRules = {
-            uppercase: (value) => {
-                return value.toUpperCase();
-            },
-            lowercase: (value) => {
-                return value.toLowerCase();
-            }
+            uppercase: value => (
+                value.toUpperCase()
+            ),
+            lowercase: value => (
+                value.toLowerCase()
+            )
         };
 
         this.validationRules = {
-            required: (value) => {
-                if (value) {
-                    return true;
-                } else {
-                    return false;
-                }
-            },
-            email: (value) => {
-                return /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value)
-            },
-            decimal: (value) => {
-                return /^$|^\d+$|^\.\d+|^\d+\.\d+$/.test(value)
-            }
+            required: value => !!value,
+            email: value => (
+                /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value)
+            ),
+            decimal: value => (
+                /^$|^\d+$|^\.\d+|^\d+\.\d+$/.test(value)
+            ),
         };
 
         this.validateForm = this.validateForm.bind(this);
@@ -58,9 +52,11 @@ class DynamicFormBuilder extends React.Component {
             case(Function):
                 return filter(event);
             case(String):
+
                 //Might be regex if it has been stored as JSON
                 if (filter[0] === '/' && filter[filter.length - 1] === '/') {
                     const regex = new RegExp(filter.substring(1, filter.length - 1));
+
                     return regex.test(event.target.value);
                 }
 
@@ -68,10 +64,12 @@ class DynamicFormBuilder extends React.Component {
                     return this.filterRules[filter](event.target.value);
                 } catch (e) {
                     console.error(`Invalid filter rule ${filter} used on input ${event.target.name}`);
+
                     return true;
                 }
             default:
                 console.error(`Invalid filter type of ${filter.constructor} on input ${event.target.name}`);
+
                 return true;
         }
     }
@@ -84,104 +82,120 @@ class DynamicFormBuilder extends React.Component {
                 return this.transformerRules[transformer](event.target.value);
             default:
                 console.error(`Invalid transformer type of ${transformer.constructor} on input ${event.target.name}`);
+
                 return event.target.value;
         }
     }
 
     validateInput(name, value, rules) {
         let valid = true;
-        let error_message = null;
+        let errorMessage = null;
 
         if (!Array.isArray(rules)) {
             rules = [rules];
         }
 
         rules.forEach((rule) => {
-            let rule_message = null;
+            let ruleMessage = null;
 
             if (rule.constructor === Object) {
-                rule_message = rule.message;
+                ruleMessage = rule.message;
                 rule = rule.rule;
             }
 
             switch (rule.constructor) {
                 case(Function):
                     if (!rule(name, value)) {
-                        error_message = rule_message;
+                        errorMessage = ruleMessage;
                         valid = false;
                     }
+
                     break;
                 case(RegExp):
                     if (!rule.test(value)) {
-                        error_message = rule_message;
+                        errorMessage = ruleMessage;
                         valid = false;
                     }
+
                     break;
                 case(String):
+
                     //Might be regex if it has been stored as JSON
                     if (rule[0] === '/' && rule[rule.length - 1] === '/') {
                         const regex = new RegExp(rule.substring(1, rule.length - 1));
+
                         if (!regex.test(value)) {
-                            error_message = rule_message;
+                            errorMessage = ruleMessage;
                             valid = false;
+
                             break;
                         }
                     }
 
                     try {
                         if (!this.validationRules[rule](value)) {
-                            error_message = rule_message;
+                            errorMessage = ruleMessage;
                             valid = false;
                         }
                     } catch (e) {
                         console.error(`Invalid filter rule ${rule} used on input ${name}`);
                     }
+
                     break;
                 default:
                     console.error(`Invalid validation type of ${rule.constructor} on input ${name}`);
             }
         });
 
+        const validationError = {
+            [name]: valid ? false : errorMessage || true,
+        };
 
-        const validation_error = {[name]: valid ? false : error_message || true};
-
-        return [valid, validation_error];
+        return [ valid, validationError ];
     }
 
-    applyValidation(event, validation, only_display_if_valid = false) {
+    applyValidation(event, validation, onlyValid = false) {
+        let { validationErrors } = this.state;
+        let [ valid, validationError ] =
+            this.validateInput(event.target.name, event.target.value, validation);
 
-        let validation_errors;
+        validationErrors = {
+            ...validationError,
+        };
 
-        let [valid, validation_error] = this.validateInput(event.target.name, event.target.value, validation);
-        validation_errors = {...this.state.validation_errors, ...validation_error};
-
-        if ((only_display_if_valid && valid) || !only_display_if_valid) {
-
-            this.setState({validation_errors});
+        if ((onlyValid && valid) || !onlyValid) {
+            this.setState({
+                validationErrors,
+            });
         }
 
-        return validation_errors;
+        return validationErrors;
     }
 
-    propagateChange(form, validation_errors) {
-        this.setState({form});
+    propagateChange(form, validationErrors) {
+        const { onChange } = this.props;
 
-        if (this.props.onChange) {
-            this.props.onChange({
-                valid: this.validateForm(false),
-                data: {
-                    form,
-                    validation_errors
+        this.setState(
+            { form },
+            () => {
+                if (onChange) {
+                    onChange({
+                        valid: this.validateForm(false),
+                        data: {
+                            form,
+                            validationErrors,
+                        },
+                    });
                 }
-            })
-        }
+            }
+        );
     }
 
     handleInput(input, event) {
         event.persist();
         clearTimeout(this.timer);
 
-        let validation_errors = {};
+        let validationErrors = {};
 
         if (input.filter && !this.applyFilter(event, input.filter)) {
             return;
@@ -198,55 +212,64 @@ class DynamicFormBuilder extends React.Component {
         }
 
         if (input.validationRules) {
+            const { validationTimeout } = this.props;
+
             // The third parameter, true, means that the input will not show as invalid
             // while the user is typing
-            validation_errors = this.applyValidation(event, input.validationRules, true);
+            validationErrors = this.applyValidation(event, input.validationRules, true);
 
-            this.timer = setTimeout(() => {
+            this.timer = setTimeout(() => (
                 this.applyValidation(event, input.validationRules)
-            }, this.props.validationTimeout || 1000);
+            ), validationTimeout || 1000);
         }
 
-        let form = this.state.form;
+        let { form } = this.form;
+
         form[event.target.name] = value;
 
-        this.propagateChange(form, validation_errors);
+        this.propagateChange(form, validationErrors);
     }
 
     handleBlur(input, event) {
         clearTimeout(this.timer);
-        let value = event.target.value;
 
-        let validation_errors = {};
+        let { form } = this.state;
+
+        let value = event.target.value;
+        let validationErrors = {};
 
         if (input.transformer && input.transformer.onBlur) {
             value = this.applyTransformer(event, input.transformer.onBlur);
         }
 
         if (input.validationRules) {
-            validation_errors = this.applyValidation(event, input.validationRules);
+            validationErrors = this.applyValidation(event, input.validationRules);
         }
 
-        if (this.state.form[event.target.name] !== value) {
-            let form = this.state.form;
+        if (form[event.target.name] !== value) {
             form[event.target.name] = value;
 
-            this.propagateChange(form, validation_errors);
+            this.propagateChange(form, validationErrors);
         }
     }
 
     validateForm(display = true) {
-        let invalid = false;
-        let validation_errors = this.state.validation_errors;
+        const { form } = this.props;
 
-        flatten(this.props.form).forEach((input) => {
+        let invalid = false;
+        let { validationErrors, form: stateForm } = this.state;
+
+        flatten(form).forEach((input) => {
             if (!input.validationRules) {
                 return;
             }
 
-            let [valid, validation_error] = this.validateInput(input.name, this.state.form[input.name], input.validationRules);
+            let [ valid, validationError ] =
+                this.validateInput(input.name, stateForm[input.name], input.validationRules);
 
-            validation_errors = {...validation_errors, ...validation_error};
+            validationErrors = {
+                ...validationError
+            };
 
             if (!valid) {
                 invalid = true;
@@ -254,64 +277,90 @@ class DynamicFormBuilder extends React.Component {
         });
 
         if (display) {
-            this.setState({validation_errors});
-            return [!invalid, validation_errors];
+            this.setState({
+                validationErrors,
+            });
+
+            return [ !invalid, validationErrors ];
         }
 
         return !invalid;
     }
 
     submitForm() {
-        if (this.props.onSubmit) {
+        const { form } = this.state;
+        const { onSubmit } = this.props;
 
-            let [valid, validation_errors] = this.validateForm();
+        if (onSubmit) {
+            let [ valid, validationErrors ] = this.validateForm();
 
-            this.props.onSubmit({
+            onSubmit({
                 valid: valid,
                 data: {
-                    form: this.state.form,
-                    validation_errors
-                }
-            })
+                    form,
+                    validationErrors,
+                },
+            });
         }
     }
 
     renderInput(input) {
-
-        if(input.constructor === Array){
+        if (input.constructor === Array) {
             return this.renderInputs(input);
         }
 
+        const { form, validationErrors } = this.state;
+
+        const {
+            formErrors,
+            classPrefix,
+            defaultInputClass,
+            invalidInputClass,
+            validInputClass,
+        } = this.props;
+
         const props = {
-            className: `${this.props.classPrefix}-${input.inputClass || this.props.defaultInputClass || ''} ${this.state.validation_errors[input.name] || this.props.formErrors[input.name] ? this.props.invalidInputClass : this.state.validation_errors[input.name] === false ? this.props.validInputClass : ''}`,
+            className: `${classPrefix}-${input.inputClass || defaultInputClass || ''} ${validationErrors[input.name] || formErrors[input.name] ? invalidInputClass : validationErrors[input.name] === false ? validInputClass : ''}`,
             name: input.name,
-            value: this.state.form[input.name] || input.defaultValue || '',
+            value: form[input.name] || input.defaultValue || '',
             placeholder: input.placeholder,
             id: input.name,
             onChange: this.handleInput.bind(this, input),
             onBlur: this.handleBlur.bind(this, input),
-            ...input.htmlProps
+            ...input.htmlProps,
         };
 
         switch (input.type) {
             case("custom"):
-                return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.state.validation_errors[input.name], this.state);
+                return input.render(input, form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), validationErrors[input.name], this.state);
             case("textarea"):
                 return (
                     <textarea {...props} />
                 );
             case("checkbox"):
                 return (
-                    <input {...props} type={input.type} onBlur={undefined} defaultChecked={props.defaultValue} checked={props.value} />
+                    <input
+                        {...props}
+                        type={input.type}
+                        onBlur={undefined}
+                        defaultChecked={props.defaultValue}
+                        checked={props.value}
+                    />
                 );
             case("select"):
                 return (
                     <select {...props} >
                         {input.defaultOptionText && (
-                            <option hidden selected value>{input.defaultOptionText}</option>
+                            <option hidden selected value>
+                                {input.defaultOptionText}
+                            </option>
                         )}
                         {(input.options || []).map((option) => {
-                            return <option value={option.value}>{option.text}</option>
+                            return (
+                                <option value={option.value}>
+                                    {option.text}
+                                </option>
+                            )
                         })}
                     </select>
                 );
@@ -320,7 +369,10 @@ class DynamicFormBuilder extends React.Component {
                     <Fragment>
                         {input.options.map((option, i) => {
                             return (
-                                <div key={i} className={`${this.props.classPrefix}-${input.radioContainerClass || ''}`}>
+                                <div
+                                    key={i}
+                                    className={`${classPrefix}-${input.radioContainerClass || ''}`}
+                                >
                                     <input
                                         name={input.name}
                                         value={option.value}
@@ -336,7 +388,7 @@ class DynamicFormBuilder extends React.Component {
             default:
                 return (
                     <input type={input.type} {...props}  />
-                )
+                );
         }
     }
 
@@ -345,13 +397,14 @@ class DynamicFormBuilder extends React.Component {
             return;
         }
 
+        const { classPrefix, defaultLabelClass } = this.props;
         const props = {
-            className: this.props.classPrefix + '-' + (input.label.className || this.props.defaultLabelClass || ''),
-            htmlFor: input.name
-        }
+            className: classPrefix + '-' + (input.label.className || defaultLabelClass || ''),
+            htmlFor: input.name,
+        };
 
         if (typeof input.label === 'function') {
-            return input.label(props)
+            return input.label(props);
         }
 
         if (input.label) {
@@ -359,47 +412,60 @@ class DynamicFormBuilder extends React.Component {
                 <label {...props}>
                     {input.label.text || input.label}
                 </label>
-            )
+            );
         }
     }
 
     renderValidationErrors(input) {
-        const validationError = (this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true) ? this.state.validation_errors[input.name] : this.props.formErrors[input.name];
+        const { validationErrors } = this.state;
+        const { classPrefix, defaultValidationErrorClass } = this.props;
+
+        const validationError = (validationErrors[input.name] && validationErrors[input.name] !== true) ? validationErrors[input.name] : this.props.formErrors[input.name];
+
         if (validationError) {
             return (
-                <p className={`${this.props.classPrefix}-${this.props.defaultValidationErrorClass || ''}`}>{validationError}</p>
-            )
+                <p className={`${classPrefix}-${defaultValidationErrorClass || ''}`}>
+                    {validationError}
+                </p>
+            );
         }
     }
 
     renderSubmitButton() {
-        if (this.props.submitButton) {
+        const { submitButton, classPrefix, defaultSubmitClass, loading } = this.props;
+
+        if (submitButton) {
             return (
                 <button
-                    className={`${this.props.classPrefix}-${this.props.submitButton.className || this.props.defaultSubmitClass || ''} ${this.validateForm(false) ? '' : 'invalid'} ${this.props.loading ? 'loading' : ''}`}
+                    className={`${classPrefix}-${submitButton.className || defaultSubmitClass || ''} ${this.validateForm(false) ? '' : 'invalid'} ${loading ? 'loading' : ''}`}
                     onClick={this.submitForm}
                 >
                     {this.renderSubmitButtonContents()}
                 </button>
-            )
+            );
         }
     }
 
-    renderSubmitButtonContents(){
-        if(this.props.loading && this.props.loadingElement){
-            return this.props.loadingElement;
-        }else{
-            return this.props.submitButton.text
+    renderSubmitButtonContents() {
+        const { submitButton, loading, loadingElement } = this.props;
+
+        if (loading && loadingElement) {
+            return loadingElement;
         }
+
+        return submitButton.text;
     }
 
     renderInputs(inputs) {
+        const { classPrefix, defaultContainerClass } = this.props;
+
         return (
             <Fragment>
                 {inputs.map((input, i) => {
                     const containerClass = input.constructor === Array ?
-                        `${this.props.classPrefix}-row` :
-                        `${this.props.classPrefix}-${input.containerClass || this.props.defaultContainerClass || ''}`;
+                        `${classPrefix}-row` :
+                        `${classPrefix}-${input.containerClass || defaultContainerClass || ''}`;
+
                     return (
                         <Fragment key={i}>
                             <div className={containerClass}>
@@ -408,10 +474,10 @@ class DynamicFormBuilder extends React.Component {
                                 {this.renderValidationErrors(input)}
                             </div>
                         </Fragment>
-                    )
+                    );
                 })}
             </Fragment>
-        )
+        );
     }
 
     render() {
@@ -421,17 +487,16 @@ class DynamicFormBuilder extends React.Component {
                     {this.renderInputs(this.props.form)}
                     {this.renderSubmitButton()}
                 </Fragment>
-            )
+            );
         } catch (e) {
             console.error(e);
+
             return (
                 <p>Error rendering form</p>
-            )
+            );
         }
     }
 }
-
-export default DynamicFormBuilder
 
 DynamicFormBuilder.defaultProps = {
     defaultValues: {},
@@ -466,3 +531,5 @@ DynamicFormBuilder.propTypes = {
     loadingElement: PropTypes.element,
     formErrors: PropTypes.object,
 };
+
+export default DynamicFormBuilder;
