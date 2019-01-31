@@ -404,6 +404,7 @@ function (_React$Component) {
           placeholder: input.placeholder,
           value: this.state.form[input.name] || '',
           onChange: this.handleBlur.bind(this, input),
+          onBlur: this.handleBlur.bind(this, input),
           invalid: !!this.state.validation_errors[input.name] || undefined
         });
       }
