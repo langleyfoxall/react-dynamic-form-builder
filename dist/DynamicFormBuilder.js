@@ -395,7 +395,17 @@ function (_React$Component) {
     key: "renderCustomInput",
     value: function renderCustomInput(input) {
       if (typeof input.render !== 'function') {
-        return input.render;
+        if (!_react.default.isValidElement(input.render)) {
+          return input.render;
+        }
+
+        return _react.default.cloneElement(input.render, {
+          name: input.name,
+          placeholder: input.placeholder,
+          value: this.state.form[input.name] || '',
+          onChange: this.handleBlur.bind(this, input),
+          invalid: !!this.state.validation_errors[input.name] || undefined
+        });
       }
 
       return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.state.validation_errors[input.name], this.state);
@@ -409,7 +419,7 @@ function (_React$Component) {
         return this.renderInputs(input);
       }
 
-      if (input.render && typeof input.render === 'function') {
+      if (input.render) {
         return this.renderCustomInput(input);
       }
 

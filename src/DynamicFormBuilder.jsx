@@ -278,7 +278,22 @@ class DynamicFormBuilder extends React.Component {
 
     renderCustomInput(input) {
         if (typeof input.render !== 'function') {
-            return input.render;
+            if (!React.isValidElement(input.render)) {
+                return input.render;
+            }
+
+            return (
+                React.cloneElement(
+                    input.render,
+                    {
+                        name: input.name,
+                        placeholder: input.placeholder,
+                        value: this.state.form[input.name] || '',
+                        onChange: this.handleBlur.bind(this, input),
+                        invalid: !!this.state.validation_errors[input.name] || undefined
+                    }
+                )
+            );
         }
 
         return input.render(
@@ -297,7 +312,7 @@ class DynamicFormBuilder extends React.Component {
             return this.renderInputs(input);
         }
 
-        if (input.render && typeof input.render === 'function') {
+        if (input.render) {
             return this.renderCustomInput(input);
         }
 
