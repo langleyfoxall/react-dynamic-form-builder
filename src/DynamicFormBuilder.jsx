@@ -204,7 +204,7 @@ class DynamicFormBuilder extends React.Component {
 
             this.timer = setTimeout(() => {
                 this.applyValidation(event, input.validationRules)
-            }, this.props.validationTimeout || 1000);
+            }, this.props.validationTimeout);
         }
 
         let form = this.state.form;
@@ -447,6 +447,7 @@ DynamicFormBuilder.defaultProps = {
     loading: false,
     loadingElement: null,
     formErrors: {},
+    validationTimeout: 1000,
 };
 
 DynamicFormBuilder.propTypes = {

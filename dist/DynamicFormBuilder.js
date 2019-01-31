@@ -311,7 +311,7 @@ function (_React$Component) {
         validation_errors = this.applyValidation(event, input.validationRules, true);
         this.timer = setTimeout(function () {
           _this3.applyValidation(event, input.validationRules);
-        }, this.props.validationTimeout || 1000);
+        }, this.props.validationTimeout);
       }
 
       var form = this.state.form;
@@ -549,7 +549,8 @@ DynamicFormBuilder.defaultProps = {
   validInputClass: 'valid',
   loading: false,
   loadingElement: null,
-  formErrors: {}
+  formErrors: {},
+  validationTimeout: 1000
 };
 DynamicFormBuilder.propTypes = {
   defaultInputClass: _propTypes.default.string,
