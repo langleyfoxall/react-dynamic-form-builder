@@ -40,6 +40,7 @@
     * [`validInputClass`](#validInputClass)
     * [`validationTimeout`](#validationTimeout)
     * [`submitButton`](#submitButton)
+    * [`onSubmit`](#onSubmit)
     * [`loading`](#loading)
     * [`loadingElement`](#loadingElement)
     * [`formErrors`](#formErrors)
@@ -174,6 +175,7 @@ The following props can be passed:
 * `validInputClass` (string, default: `valid`)
 * `validationTimeout` (number, default: `1000`)
 * `submitButton` (object, `{ text, className? }`)
+* `onSubmit` (function)
 * `loading` (bool, default `false`)
 * `loadingElement` (element, default `null`)
 * `formErrors` (object, default: `{}`)
@@ -277,6 +279,22 @@ The following props can be passed:
     text: 'Sign up'
     // className: 'secondary-button'
     // > 'rdf-secondary-button'
+}
+```
+
+#### `onSubmit`
+
+`onSubmit` should be called when the form is ready to be submitted, it is also triggered when the `submitButton` is pressed.
+
+When `onSubmit` is triggered the callback will recieve an object containing:
+
+```js
+{
+    valid, // Boolean for valid state of inputs
+    data: {
+        form, // Data from inputs
+        validation_errors // An object of errors for each input
+    }
 }
 ```
 
