@@ -276,10 +276,45 @@ class DynamicFormBuilder extends React.Component {
         }
     }
 
+    renderCustomInput(input) {
+        if (typeof input.render !== 'function') {
+            if (!React.isValidElement(input.render)) {
+                return input.render;
+            }
+
+            return (
+                React.cloneElement(
+                    input.render,
+                    {
+                        name: input.name,
+                        placeholder: input.placeholder,
+                        value: this.state.form[input.name] || '',
+                        onChange: this.handleBlur.bind(this, input),
+                        onBlur: this.handleBlur.bind(this, input),
+                        invalid: !!this.state.validation_errors[input.name] || undefined
+                    }
+                )
+            );
+        }
+
+        return input.render(
+            input,
+            this.state.form[input.name] || '',
+            this.handleInput.bind(this, input),
+            this.handleBlur.bind(this, input),
+            this.state.validation_errors[input.name],
+            this.state
+        );
+    }
+
     renderInput(input) {
 
-        if(input.constructor === Array){
+        if (input.constructor === Array) {
             return this.renderInputs(input);
+        }
+
+        if (input.render) {
+            return this.renderCustomInput(input);
         }
 
         const props = {
@@ -295,7 +330,7 @@ class DynamicFormBuilder extends React.Component {
 
         switch (input.type) {
             case("custom"):
-                return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.state.validation_errors[input.name], this.state);
+                return this.renderCustomInput(input);
             case("textarea"):
                 return (
                     <textarea {...props} />
