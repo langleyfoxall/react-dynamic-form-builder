@@ -311,7 +311,7 @@ function (_React$Component) {
         validationErrors = this.applyValidation(event, input.validationRules, true);
         this.timer = setTimeout(function () {
           return _this4.applyValidation(event, input.validationRules);
-        }, validationTimeout || 1000);
+        }, validationTimeout);
       }
 
       var form = this.form.form;
@@ -398,6 +398,30 @@ function (_React$Component) {
       }
     }
   }, {
+    key: "renderCustomInput",
+    value: function renderCustomInput(input) {
+      var _this$state2 = this.state,
+          form = _this$state2.form,
+          validationErrors = _this$state2.validationErrors;
+
+      if (typeof input.render !== 'function') {
+        if (!_react.default.isValidElement(input.render)) {
+          return input.render;
+        }
+
+        return _react.default.cloneElement(input.render, {
+          name: input.name,
+          placeholder: input.placeholder,
+          value: form[input.name] || '',
+          onChange: this.handleBlur.bind(this, input),
+          onBlur: this.handleBlur.bind(this, input),
+          invalid: !!validationErrors[input.name] || undefined
+        });
+      }
+
+      return input.render(input, form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), validationErrors[input.name], this.state);
+    }
+  }, {
     key: "renderInput",
     value: function renderInput(input) {
       var _this6 = this;
@@ -406,15 +430,19 @@ function (_React$Component) {
         return this.renderInputs(input);
       }
 
-      var _this$state2 = this.state,
-          form = _this$state2.form,
-          validationErrors = _this$state2.validationErrors;
+      var _this$state3 = this.state,
+          form = _this$state3.form,
+          validationErrors = _this$state3.validationErrors;
       var _this$props = this.props,
           formErrors = _this$props.formErrors,
           classPrefix = _this$props.classPrefix,
           defaultInputClass = _this$props.defaultInputClass,
           invalidInputClass = _this$props.invalidInputClass,
           validInputClass = _this$props.validInputClass;
+
+      if (input.render) {
+        return this.renderCustomInput(input);
+      }
 
       var props = _objectSpread({
         className: "".concat(classPrefix, "-").concat(input.inputClass || defaultInputClass || '', " ").concat(validationErrors[input.name] || formErrors[input.name] ? invalidInputClass : validationErrors[input.name] === false ? validInputClass : ''),
@@ -428,7 +456,7 @@ function (_React$Component) {
 
       switch (input.type) {
         case "custom":
-          return input.render(input, form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), validationErrors[input.name], this.state);
+          return this.renderCustomInput(input);
 
         case "textarea":
           return _react.default.createElement("textarea", props);
@@ -500,8 +528,9 @@ function (_React$Component) {
       var validationErrors = this.state.validationErrors;
       var _this$props3 = this.props,
           classPrefix = _this$props3.classPrefix,
-          defaultValidationErrorClass = _this$props3.defaultValidationErrorClass;
-      var validationError = validationErrors[input.name] && validationErrors[input.name] !== true ? validationErrors[input.name] : this.props.formErrors[input.name];
+          defaultValidationErrorClass = _this$props3.defaultValidationErrorClass,
+          formErrors = _this$props3.formErrors;
+      var validationError = validationErrors[input.name] && validationErrors[input.name] !== true ? validationErrors[input.name] : formErrors[input.name];
 
       if (validationError) {
         return _react.default.createElement("p", {
@@ -548,12 +577,13 @@ function (_React$Component) {
           classPrefix = _this$props6.classPrefix,
           defaultContainerClass = _this$props6.defaultContainerClass;
       return _react.default.createElement(_react.Fragment, null, inputs.map(function (input, i) {
-        var containerClass = input.constructor === Array ? "".concat(classPrefix, "-row") : "".concat(classPrefix, "-").concat(input.containerClass || defaultContainerClass || '');
+        var isArray = input.constructor === Array;
+        var containerClass = isArray ? "".concat(classPrefix, "-row") : "".concat(classPrefix, "-").concat(input.containerClass || defaultContainerClass || '');
         return _react.default.createElement(_react.Fragment, {
           key: i
         }, _react.default.createElement("div", {
           className: containerClass
-        }, _this7.renderLabel(input), _this7.renderInput(input), _this7.renderValidationErrors(input)));
+        }, !isArray && _this7.renderLabel(input), _this7.renderInput(input), !isArray && _this7.renderValidationErrors(input)));
       }));
     }
   }, {
@@ -584,7 +614,8 @@ DynamicFormBuilder.defaultProps = {
   validInputClass: 'valid',
   loading: false,
   loadingElement: null,
-  formErrors: {}
+  formErrors: {},
+  validationTimeout: 1000
 };
 DynamicFormBuilder.propTypes = {
   defaultInputClass: _propTypes.default.string,

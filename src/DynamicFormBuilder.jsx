@@ -220,7 +220,7 @@ class DynamicFormBuilder extends React.Component {
 
             this.timer = setTimeout(() => (
                 this.applyValidation(event, input.validationRules)
-            ), validationTimeout || 1000);
+            ), validationTimeout);
         }
 
         let { form } = this.form;
@@ -304,6 +304,39 @@ class DynamicFormBuilder extends React.Component {
         }
     }
 
+    renderCustomInput(input) {
+        const { form, validationErrors } = this.state;
+
+        if (typeof input.render !== 'function') {
+            if (!React.isValidElement(input.render)) {
+                return input.render;
+            }
+
+            return (
+                React.cloneElement(
+                    input.render,
+                    {
+                        name: input.name,
+                        placeholder: input.placeholder,
+                        value: form[input.name] || '',
+                        onChange: this.handleBlur.bind(this, input),
+                        onBlur: this.handleBlur.bind(this, input),
+                        invalid: !!validationErrors[input.name] || undefined
+                    }
+                )
+            );
+        }
+
+        return input.render(
+            input,
+            form[input.name] || '',
+            this.handleInput.bind(this, input),
+            this.handleBlur.bind(this, input),
+            validationErrors[input.name],
+            this.state
+        );
+    }
+
     renderInput(input) {
         if (input.constructor === Array) {
             return this.renderInputs(input);
@@ -319,6 +352,10 @@ class DynamicFormBuilder extends React.Component {
             validInputClass,
         } = this.props;
 
+        if (input.render) {
+            return this.renderCustomInput(input);
+        }
+
         const props = {
             className: `${classPrefix}-${input.inputClass || defaultInputClass || ''} ${validationErrors[input.name] || formErrors[input.name] ? invalidInputClass : validationErrors[input.name] === false ? validInputClass : ''}`,
             name: input.name,
@@ -332,7 +369,7 @@ class DynamicFormBuilder extends React.Component {
 
         switch (input.type) {
             case("custom"):
-                return input.render(input, form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), validationErrors[input.name], this.state);
+                return this.renderCustomInput(input);
             case("textarea"):
                 return (
                     <textarea {...props} />
@@ -418,9 +455,9 @@ class DynamicFormBuilder extends React.Component {
 
     renderValidationErrors(input) {
         const { validationErrors } = this.state;
-        const { classPrefix, defaultValidationErrorClass } = this.props;
+        const { classPrefix, defaultValidationErrorClass, formErrors } = this.props;
 
-        const validationError = (validationErrors[input.name] && validationErrors[input.name] !== true) ? validationErrors[input.name] : this.props.formErrors[input.name];
+        const validationError = (validationErrors[input.name] && validationErrors[input.name] !== true) ? validationErrors[input.name] : formErrors[input.name];
 
         if (validationError) {
             return (
@@ -462,16 +499,17 @@ class DynamicFormBuilder extends React.Component {
         return (
             <Fragment>
                 {inputs.map((input, i) => {
-                    const containerClass = input.constructor === Array ?
-                        `${classPrefix}-row` :
-                        `${classPrefix}-${input.containerClass || defaultContainerClass || ''}`;
+                    const isArray = input.constructor === Array;
+                    const containerClass =  isArray
+                        ? `${classPrefix}-row`
+                        : `${classPrefix}-${input.containerClass || defaultContainerClass || ''}`;
 
                     return (
                         <Fragment key={i}>
                             <div className={containerClass}>
-                                {this.renderLabel(input)}
+                                {!isArray && this.renderLabel(input)}
                                 {this.renderInput(input)}
-                                {this.renderValidationErrors(input)}
+                                {!isArray && this.renderValidationErrors(input)}
                             </div>
                         </Fragment>
                     );
@@ -512,6 +550,7 @@ DynamicFormBuilder.defaultProps = {
     loading: false,
     loadingElement: null,
     formErrors: {},
+    validationTimeout: 1000,
 };
 
 DynamicFormBuilder.propTypes = {
