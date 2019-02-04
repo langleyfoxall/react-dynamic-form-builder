@@ -261,6 +261,13 @@ class DynamicFormBuilder extends React.Component {
         return !invalid;
     }
 
+    getInputValidationError(inputName) {
+        const validationError = this.state.validation_errors[inputName];
+        const propError = this.props.formErrors[inputName];
+        
+        return (validationError && validationError !== true) ? validationError : propError;
+    }
+    
     submitForm() {
         if (this.props.onSubmit) {
 
@@ -291,7 +298,7 @@ class DynamicFormBuilder extends React.Component {
                         value: this.state.form[input.name] || '',
                         onChange: this.handleBlur.bind(this, input),
                         onBlur: this.handleBlur.bind(this, input),
-                        invalid: !!this.state.validation_errors[input.name] || undefined
+                        invalid: !!this.getInputValidationError(input.name) || undefined
                     }
                 )
             );
@@ -302,7 +309,7 @@ class DynamicFormBuilder extends React.Component {
             this.state.form[input.name] || '',
             this.handleInput.bind(this, input),
             this.handleBlur.bind(this, input),
-            this.state.validation_errors[input.name],
+            this.getInputValidationError(input.name),
             this.state
         );
     }
@@ -399,7 +406,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     renderValidationErrors(input) {
-        const validationError = (this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true) ? this.state.validation_errors[input.name] : this.props.formErrors[input.name];
+        const validationError = this.getInputValidationError(input.name);
         if (validationError) {
             return (
                 <p className={`${this.props.classPrefix}-${this.props.defaultValidationErrorClass || ''}`}>{validationError}</p>

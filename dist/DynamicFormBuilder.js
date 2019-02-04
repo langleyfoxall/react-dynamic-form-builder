@@ -374,6 +374,13 @@ function (_React$Component) {
       return !invalid;
     }
   }, {
+    key: "getInputValidationError",
+    value: function getInputValidationError(inputName) {
+      var validationError = this.state.validation_errors[inputName];
+      var propError = this.props.formErrors[inputName];
+      return validationError && validationError !== true ? validationError : propError;
+    }
+  }, {
     key: "submitForm",
     value: function submitForm() {
       if (this.props.onSubmit) {
@@ -405,11 +412,11 @@ function (_React$Component) {
           value: this.state.form[input.name] || '',
           onChange: this.handleBlur.bind(this, input),
           onBlur: this.handleBlur.bind(this, input),
-          invalid: !!this.state.validation_errors[input.name] || undefined
+          invalid: !!this.getInputValidationError(input.name) || undefined
         });
       }
 
-      return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.state.validation_errors[input.name], this.state);
+      return input.render(input, this.state.form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.getInputValidationError(input.name), this.state);
     }
   }, {
     key: "renderInput",
@@ -502,7 +509,7 @@ function (_React$Component) {
   }, {
     key: "renderValidationErrors",
     value: function renderValidationErrors(input) {
-      var validationError = this.state.validation_errors[input.name] && this.state.validation_errors[input.name] !== true ? this.state.validation_errors[input.name] : this.props.formErrors[input.name];
+      var validationError = this.getInputValidationError(input.name);
 
       if (validationError) {
         return _react.default.createElement("p", {
