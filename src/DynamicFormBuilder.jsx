@@ -49,9 +49,6 @@ class DynamicFormBuilder extends React.Component {
         const { values: ppValues } = prevProps
         const { values: pValues } = this.props
 
-        console.log('prev %O', ppValues, ppValues.distance)
-        console.log('props %O', pValues, pValues.distance)
-
         if (pValues) {
             console.log(JSON.stringify(pValues) !== JSON.stringify(ppValues))
             if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
@@ -194,7 +191,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     propagateChange(form, validationErrors) {
-        const { values, onChange } = this.props;
+        const { onChange } = this.props;
 
         const callback = () => (
             onChange({
@@ -336,7 +333,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     renderCustomInput(input) {
-        const { form, validationErrors } = this.state;
+        const { form } = this.state;
 
         if (typeof input.render !== 'function') {
             if (!React.isValidElement(input.render)) {

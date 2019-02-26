@@ -132,8 +132,6 @@ function (_React$Component) {
     value: function componentDidUpdate(prevProps) {
       var ppValues = prevProps.values;
       var pValues = this.props.values;
-      console.log('prev %O', ppValues, ppValues.distance);
-      console.log('props %O', pValues, pValues.distance);
 
       if (pValues) {
         console.log(JSON.stringify(pValues) !== JSON.stringify(ppValues));
@@ -286,9 +284,7 @@ function (_React$Component) {
     value: function propagateChange(form, validationErrors) {
       var _this3 = this;
 
-      var _this$props = this.props,
-          values = _this$props.values,
-          onChange = _this$props.onChange;
+      var onChange = this.props.onChange;
 
       var callback = function callback() {
         return onChange({
@@ -432,9 +428,7 @@ function (_React$Component) {
   }, {
     key: "renderCustomInput",
     value: function renderCustomInput(input) {
-      var _this$state2 = this.state,
-          form = _this$state2.form,
-          validationErrors = _this$state2.validationErrors;
+      var form = this.state.form;
 
       if (typeof input.render !== 'function') {
         if (!_react.default.isValidElement(input.render)) {
@@ -462,15 +456,15 @@ function (_React$Component) {
         return this.renderInputs(input);
       }
 
-      var _this$state3 = this.state,
-          form = _this$state3.form,
-          validationErrors = _this$state3.validationErrors;
-      var _this$props2 = this.props,
-          formErrors = _this$props2.formErrors,
-          classPrefix = _this$props2.classPrefix,
-          defaultInputClass = _this$props2.defaultInputClass,
-          invalidInputClass = _this$props2.invalidInputClass,
-          validInputClass = _this$props2.validInputClass;
+      var _this$state2 = this.state,
+          form = _this$state2.form,
+          validationErrors = _this$state2.validationErrors;
+      var _this$props = this.props,
+          formErrors = _this$props.formErrors,
+          classPrefix = _this$props.classPrefix,
+          defaultInputClass = _this$props.defaultInputClass,
+          invalidInputClass = _this$props.invalidInputClass,
+          validInputClass = _this$props.validInputClass;
 
       if (input.render) {
         return this.renderCustomInput(input);
@@ -538,9 +532,9 @@ function (_React$Component) {
         return;
       }
 
-      var _this$props3 = this.props,
-          classPrefix = _this$props3.classPrefix,
-          defaultLabelClass = _this$props3.defaultLabelClass;
+      var _this$props2 = this.props,
+          classPrefix = _this$props2.classPrefix,
+          defaultLabelClass = _this$props2.defaultLabelClass;
       var props = {
         className: classPrefix + '-' + (input.label.className || defaultLabelClass || ''),
         htmlFor: input.name
@@ -558,10 +552,10 @@ function (_React$Component) {
     key: "renderValidationErrors",
     value: function renderValidationErrors(input) {
       var validationErrors = this.state.validationErrors;
-      var _this$props4 = this.props,
-          classPrefix = _this$props4.classPrefix,
-          defaultValidationErrorClass = _this$props4.defaultValidationErrorClass,
-          formErrors = _this$props4.formErrors;
+      var _this$props3 = this.props,
+          classPrefix = _this$props3.classPrefix,
+          defaultValidationErrorClass = _this$props3.defaultValidationErrorClass,
+          formErrors = _this$props3.formErrors;
       var validationError = this.getInputValidationError(input.name);
 
       if (validationError) {
@@ -573,11 +567,11 @@ function (_React$Component) {
   }, {
     key: "renderSubmitButton",
     value: function renderSubmitButton() {
-      var _this$props5 = this.props,
-          submitButton = _this$props5.submitButton,
-          classPrefix = _this$props5.classPrefix,
-          defaultSubmitClass = _this$props5.defaultSubmitClass,
-          loading = _this$props5.loading;
+      var _this$props4 = this.props,
+          submitButton = _this$props4.submitButton,
+          classPrefix = _this$props4.classPrefix,
+          defaultSubmitClass = _this$props4.defaultSubmitClass,
+          loading = _this$props4.loading;
 
       if (submitButton) {
         return _react.default.createElement("button", {
@@ -589,10 +583,10 @@ function (_React$Component) {
   }, {
     key: "renderSubmitButtonContents",
     value: function renderSubmitButtonContents() {
-      var _this$props6 = this.props,
-          submitButton = _this$props6.submitButton,
-          loading = _this$props6.loading,
-          loadingElement = _this$props6.loadingElement;
+      var _this$props5 = this.props,
+          submitButton = _this$props5.submitButton,
+          loading = _this$props5.loading,
+          loadingElement = _this$props5.loadingElement;
 
       if (loading && loadingElement) {
         return loadingElement;
@@ -605,9 +599,9 @@ function (_React$Component) {
     value: function renderInputs(inputs) {
       var _this7 = this;
 
-      var _this$props7 = this.props,
-          classPrefix = _this$props7.classPrefix,
-          defaultContainerClass = _this$props7.defaultContainerClass;
+      var _this$props6 = this.props,
+          classPrefix = _this$props6.classPrefix,
+          defaultContainerClass = _this$props6.defaultContainerClass;
       return _react.default.createElement(_react.Fragment, null, inputs.map(function (input, i) {
         var isArray = input.constructor === Array;
         var containerClass = isArray ? "".concat(classPrefix, "-row") : "".concat(classPrefix, "-").concat(input.containerClass || defaultContainerClass || '');
