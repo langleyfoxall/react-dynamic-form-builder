@@ -45,14 +45,18 @@ class DynamicFormBuilder extends React.Component {
         this.propagateChange = this.propagateChange.bind(this);
     }
 
-    componentDidUpdate(_, state) {
-        const { form: sValues } = state
+    componentDidUpdate(prevProps) {
+        const { values: ppValues } = prevProps
         const { values: pValues } = this.props
 
+        console.log('prev %O', ppValues, ppValues.distance)
+        console.log('props %O', pValues, pValues.distance)
+
         if (pValues) {
-            if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
+            console.log(JSON.stringify(pValues) !== JSON.stringify(ppValues))
+            if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
                 const form = {
-                    ...sValues, ...pValues
+                    ...ppValues, ...pValues
                 };
 
                 this.propagateChange(form);
@@ -190,21 +194,21 @@ class DynamicFormBuilder extends React.Component {
     }
 
     propagateChange(form, validationErrors) {
-        const { onChange } = this.props;
+        const { values, onChange } = this.props;
+
+        const callback = () => (
+            onChange({
+                valid: this.validateForm(false),
+                data: {
+                    form,
+                    validationErrors,
+                },
+            })
+        );
 
         this.setState(
             { form: { ...form } },
-            () => {
-                if (onChange) {
-                    onChange({
-                        valid: this.validateForm(false),
-                        data: {
-                            form,
-                            validationErrors,
-                        },
-                    });
-                }
-            }
+            callback
         );
     }
 
@@ -579,6 +583,7 @@ DynamicFormBuilder.defaultProps = {
     loadingElement: null,
     formErrors: {},
     validationTimeout: 1000,
+    onChange: () => null,
 };
 
 DynamicFormBuilder.propTypes = {
@@ -598,6 +603,7 @@ DynamicFormBuilder.propTypes = {
     validInputClass: PropTypes.string,
     loadingElement: PropTypes.element,
     formErrors: PropTypes.object,
+    onChange: PropTypes.func,
 };
 
 export default DynamicFormBuilder;

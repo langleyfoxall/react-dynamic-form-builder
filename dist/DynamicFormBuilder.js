@@ -129,13 +129,17 @@ function (_React$Component) {
 
   _createClass(DynamicFormBuilder, [{
     key: "componentDidUpdate",
-    value: function componentDidUpdate(_, state) {
-      var sValues = state.form;
+    value: function componentDidUpdate(prevProps) {
+      var ppValues = prevProps.values;
       var pValues = this.props.values;
+      console.log('prev %O', ppValues, ppValues.distance);
+      console.log('props %O', pValues, pValues.distance);
 
       if (pValues) {
-        if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
-          var form = _objectSpread({}, sValues, pValues);
+        console.log(JSON.stringify(pValues) !== JSON.stringify(ppValues));
+
+        if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
+          var form = _objectSpread({}, ppValues, pValues);
 
           this.propagateChange(form);
         }
@@ -282,20 +286,23 @@ function (_React$Component) {
     value: function propagateChange(form, validationErrors) {
       var _this3 = this;
 
-      var onChange = this.props.onChange;
+      var _this$props = this.props,
+          values = _this$props.values,
+          onChange = _this$props.onChange;
+
+      var callback = function callback() {
+        return onChange({
+          valid: _this3.validateForm(false),
+          data: {
+            form: form,
+            validationErrors: validationErrors
+          }
+        });
+      };
+
       this.setState({
         form: _objectSpread({}, form)
-      }, function () {
-        if (onChange) {
-          onChange({
-            valid: _this3.validateForm(false),
-            data: {
-              form: form,
-              validationErrors: validationErrors
-            }
-          });
-        }
-      });
+      }, callback);
     }
   }, {
     key: "handleInput",
@@ -458,12 +465,12 @@ function (_React$Component) {
       var _this$state3 = this.state,
           form = _this$state3.form,
           validationErrors = _this$state3.validationErrors;
-      var _this$props = this.props,
-          formErrors = _this$props.formErrors,
-          classPrefix = _this$props.classPrefix,
-          defaultInputClass = _this$props.defaultInputClass,
-          invalidInputClass = _this$props.invalidInputClass,
-          validInputClass = _this$props.validInputClass;
+      var _this$props2 = this.props,
+          formErrors = _this$props2.formErrors,
+          classPrefix = _this$props2.classPrefix,
+          defaultInputClass = _this$props2.defaultInputClass,
+          invalidInputClass = _this$props2.invalidInputClass,
+          validInputClass = _this$props2.validInputClass;
 
       if (input.render) {
         return this.renderCustomInput(input);
@@ -531,9 +538,9 @@ function (_React$Component) {
         return;
       }
 
-      var _this$props2 = this.props,
-          classPrefix = _this$props2.classPrefix,
-          defaultLabelClass = _this$props2.defaultLabelClass;
+      var _this$props3 = this.props,
+          classPrefix = _this$props3.classPrefix,
+          defaultLabelClass = _this$props3.defaultLabelClass;
       var props = {
         className: classPrefix + '-' + (input.label.className || defaultLabelClass || ''),
         htmlFor: input.name
@@ -551,10 +558,10 @@ function (_React$Component) {
     key: "renderValidationErrors",
     value: function renderValidationErrors(input) {
       var validationErrors = this.state.validationErrors;
-      var _this$props3 = this.props,
-          classPrefix = _this$props3.classPrefix,
-          defaultValidationErrorClass = _this$props3.defaultValidationErrorClass,
-          formErrors = _this$props3.formErrors;
+      var _this$props4 = this.props,
+          classPrefix = _this$props4.classPrefix,
+          defaultValidationErrorClass = _this$props4.defaultValidationErrorClass,
+          formErrors = _this$props4.formErrors;
       var validationError = this.getInputValidationError(input.name);
 
       if (validationError) {
@@ -566,11 +573,11 @@ function (_React$Component) {
   }, {
     key: "renderSubmitButton",
     value: function renderSubmitButton() {
-      var _this$props4 = this.props,
-          submitButton = _this$props4.submitButton,
-          classPrefix = _this$props4.classPrefix,
-          defaultSubmitClass = _this$props4.defaultSubmitClass,
-          loading = _this$props4.loading;
+      var _this$props5 = this.props,
+          submitButton = _this$props5.submitButton,
+          classPrefix = _this$props5.classPrefix,
+          defaultSubmitClass = _this$props5.defaultSubmitClass,
+          loading = _this$props5.loading;
 
       if (submitButton) {
         return _react.default.createElement("button", {
@@ -582,10 +589,10 @@ function (_React$Component) {
   }, {
     key: "renderSubmitButtonContents",
     value: function renderSubmitButtonContents() {
-      var _this$props5 = this.props,
-          submitButton = _this$props5.submitButton,
-          loading = _this$props5.loading,
-          loadingElement = _this$props5.loadingElement;
+      var _this$props6 = this.props,
+          submitButton = _this$props6.submitButton,
+          loading = _this$props6.loading,
+          loadingElement = _this$props6.loadingElement;
 
       if (loading && loadingElement) {
         return loadingElement;
@@ -598,9 +605,9 @@ function (_React$Component) {
     value: function renderInputs(inputs) {
       var _this7 = this;
 
-      var _this$props6 = this.props,
-          classPrefix = _this$props6.classPrefix,
-          defaultContainerClass = _this$props6.defaultContainerClass;
+      var _this$props7 = this.props,
+          classPrefix = _this$props7.classPrefix,
+          defaultContainerClass = _this$props7.defaultContainerClass;
       return _react.default.createElement(_react.Fragment, null, inputs.map(function (input, i) {
         var isArray = input.constructor === Array;
         var containerClass = isArray ? "".concat(classPrefix, "-row") : "".concat(classPrefix, "-").concat(input.containerClass || defaultContainerClass || '');
@@ -641,7 +648,10 @@ DynamicFormBuilder.defaultProps = {
   loading: false,
   loadingElement: null,
   formErrors: {},
-  validationTimeout: 1000
+  validationTimeout: 1000,
+  onChange: function onChange() {
+    return null;
+  }
 };
 DynamicFormBuilder.propTypes = {
   defaultValues: _propTypes.default.object,
@@ -659,7 +669,8 @@ DynamicFormBuilder.propTypes = {
   invalidInputClass: _propTypes.default.string,
   validInputClass: _propTypes.default.string,
   loadingElement: _propTypes.default.element,
-  formErrors: _propTypes.default.object
+  formErrors: _propTypes.default.object,
+  onChange: _propTypes.default.func
 };
 var _default = DynamicFormBuilder;
 exports.default = _default;
