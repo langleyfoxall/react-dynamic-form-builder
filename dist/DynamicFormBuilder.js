@@ -379,8 +379,10 @@ function (_React$Component) {
   }, {
     key: "getInputValidationError",
     value: function getInputValidationError(inputName) {
-      var validationError = this.state.validation_errors[inputName];
-      var propError = this.props.formErrors[inputName];
+      var validationErrors = this.state.validationErrors;
+      var formErrors = this.props.formErrors;
+      var validationError = validationErrors[inputName];
+      var propError = formErrors[inputName];
       return validationError && validationError !== true ? validationError : propError;
     }
   }, {
