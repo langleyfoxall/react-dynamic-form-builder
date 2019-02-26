@@ -50,7 +50,6 @@ class DynamicFormBuilder extends React.Component {
         const { values: pValues } = this.props
 
         if (pValues) {
-            console.log(JSON.stringify(pValues) !== JSON.stringify(ppValues))
             if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
                 const form = {
                     ...ppValues, ...pValues

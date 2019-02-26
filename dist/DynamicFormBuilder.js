@@ -134,8 +134,6 @@ function (_React$Component) {
       var pValues = this.props.values;
 
       if (pValues) {
-        console.log(JSON.stringify(pValues) !== JSON.stringify(ppValues));
-
         if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
           var form = _objectSpread({}, ppValues, pValues);
 
