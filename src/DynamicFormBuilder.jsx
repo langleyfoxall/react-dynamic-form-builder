@@ -45,16 +45,17 @@ class DynamicFormBuilder extends React.Component {
         this.propagateChange = this.propagateChange.bind(this);
     }
 
-    static getDerivedStateFromProps(props, state) {
-        const { form: sValues } = state
-        const { values: pValues } = props
+    componentDidUpdate(prevProps) {
+        const { values: ppValues } = prevProps
+        const { values: pValues } = this.props
 
         if (pValues) {
-            if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
-                return {
-                    ...state,
-                    form: { ...sValues, ...pValues },
+            if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
+                const form = {
+                    ...ppValues, ...pValues
                 };
+
+                this.propagateChange(form);
             }
         }
 
@@ -191,19 +192,19 @@ class DynamicFormBuilder extends React.Component {
     propagateChange(form, validationErrors) {
         const { onChange } = this.props;
 
+        const callback = () => (
+            onChange({
+                valid: this.validateForm(false),
+                data: {
+                    form,
+                    validationErrors,
+                },
+            })
+        );
+
         this.setState(
-            { form },
-            () => {
-                if (onChange) {
-                    onChange({
-                        valid: this.validateForm(false),
-                        data: {
-                            form,
-                            validationErrors,
-                        },
-                    });
-                }
-            }
+            { form: { ...form } },
+            callback
         );
     }
 
@@ -331,7 +332,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     renderCustomInput(input) {
-        const { form, validationErrors } = this.state;
+        const { form } = this.state;
 
         if (typeof input.render !== 'function') {
             if (!React.isValidElement(input.render)) {
@@ -578,6 +579,7 @@ DynamicFormBuilder.defaultProps = {
     loadingElement: null,
     formErrors: {},
     validationTimeout: 1000,
+    onChange: () => null,
 };
 
 DynamicFormBuilder.propTypes = {
@@ -597,6 +599,7 @@ DynamicFormBuilder.propTypes = {
     validInputClass: PropTypes.string,
     loadingElement: PropTypes.element,
     formErrors: PropTypes.object,
+    onChange: PropTypes.func,
 };
 
 export default DynamicFormBuilder;

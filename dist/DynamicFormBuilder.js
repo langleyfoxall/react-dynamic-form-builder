@@ -19,11 +19,7 @@ require("core-js/modules/es6.object.create");
 
 require("core-js/modules/es6.object.set-prototype-of");
 
-require("core-js/modules/es6.array.iterator");
-
 require("core-js/modules/es6.array.map");
-
-require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.for-each");
 
@@ -34,6 +30,10 @@ require("core-js/modules/es6.function.name");
 require("core-js/modules/es6.array.filter");
 
 require("core-js/modules/es6.regexp.constructor");
+
+require("core-js/modules/web.dom.iterable");
+
+require("core-js/modules/es6.array.iterator");
 
 require("core-js/modules/es6.function.bind");
 
@@ -128,6 +128,22 @@ function (_React$Component) {
   }
 
   _createClass(DynamicFormBuilder, [{
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      var ppValues = prevProps.values;
+      var pValues = this.props.values;
+
+      if (pValues) {
+        if (JSON.stringify(pValues) !== JSON.stringify(ppValues)) {
+          var form = _objectSpread({}, ppValues, pValues);
+
+          this.propagateChange(form);
+        }
+      }
+
+      return null;
+    }
+  }, {
     key: "applyFilter",
     value: function applyFilter(event, filter) {
       switch (filter.constructor) {
@@ -267,19 +283,20 @@ function (_React$Component) {
       var _this3 = this;
 
       var onChange = this.props.onChange;
+
+      var callback = function callback() {
+        return onChange({
+          valid: _this3.validateForm(false),
+          data: {
+            form: form,
+            validationErrors: validationErrors
+          }
+        });
+      };
+
       this.setState({
-        form: form
-      }, function () {
-        if (onChange) {
-          onChange({
-            valid: _this3.validateForm(false),
-            data: {
-              form: form,
-              validationErrors: validationErrors
-            }
-          });
-        }
-      });
+        form: _objectSpread({}, form)
+      }, callback);
     }
   }, {
     key: "handleInput",
@@ -409,9 +426,7 @@ function (_React$Component) {
   }, {
     key: "renderCustomInput",
     value: function renderCustomInput(input) {
-      var _this$state2 = this.state,
-          form = _this$state2.form,
-          validationErrors = _this$state2.validationErrors;
+      var form = this.state.form;
 
       if (typeof input.render !== 'function') {
         if (!_react.default.isValidElement(input.render)) {
@@ -439,9 +454,9 @@ function (_React$Component) {
         return this.renderInputs(input);
       }
 
-      var _this$state3 = this.state,
-          form = _this$state3.form,
-          validationErrors = _this$state3.validationErrors;
+      var _this$state2 = this.state,
+          form = _this$state2.form,
+          validationErrors = _this$state2.validationErrors;
       var _this$props = this.props,
           formErrors = _this$props.formErrors,
           classPrefix = _this$props.classPrefix,
@@ -605,22 +620,6 @@ function (_React$Component) {
         return _react.default.createElement("p", null, "Error rendering form");
       }
     }
-  }], [{
-    key: "getDerivedStateFromProps",
-    value: function getDerivedStateFromProps(props, state) {
-      var sValues = state.form;
-      var pValues = props.values;
-
-      if (pValues) {
-        if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
-          return _objectSpread({}, state, {
-            form: _objectSpread({}, sValues, pValues)
-          });
-        }
-      }
-
-      return null;
-    }
   }]);
 
   return DynamicFormBuilder;
@@ -641,7 +640,10 @@ DynamicFormBuilder.defaultProps = {
   loading: false,
   loadingElement: null,
   formErrors: {},
-  validationTimeout: 1000
+  validationTimeout: 1000,
+  onChange: function onChange() {
+    return null;
+  }
 };
 DynamicFormBuilder.propTypes = {
   defaultValues: _propTypes.default.object,
@@ -659,7 +661,8 @@ DynamicFormBuilder.propTypes = {
   invalidInputClass: _propTypes.default.string,
   validInputClass: _propTypes.default.string,
   loadingElement: _propTypes.default.element,
-  formErrors: _propTypes.default.object
+  formErrors: _propTypes.default.object,
+  onChange: _propTypes.default.func
 };
 var _default = DynamicFormBuilder;
 exports.default = _default;
