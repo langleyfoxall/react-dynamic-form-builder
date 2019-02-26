@@ -35,6 +35,7 @@
     * [`defaultValidationErrorClass`](#defaultValidationErrorClass)
     * [`defaultSubmitClass`](#defaultSubmitClass)
     * [`defaultValues`](#defaultValues)
+    * [`values`](#values)
     * [`classPrefix`](#classPrefix)
     * [`invalidInputClass`](#invalidInputClass)
     * [`validInputClass`](#validInputClass)
@@ -170,6 +171,7 @@ The following props can be passed:
 * `defaultValidationErrorClass` (string, default: `error-label`)
 * `defaultSubmitClass` (string, default `submit`)
 * `defaultValues` (object, default: `{}`)
+* `values` (object, default: `null`)
 * `classPrefix` (string, default: `rdf`)
 * `invalidInputClass` (string, default: `invalid`)
 * `validInputClass` (string, default: `valid`)
@@ -233,6 +235,22 @@ The following props can be passed:
 ```js
 // With default value
 {}
+
+// With custom value
+{
+    first_name: 'John',
+    last_name: 'Doe',
+}
+```
+
+#### `values`
+
+`values` is used to overwrite the state of the form and set values from outside the form.
+This should be used in conjunction with `onChange`.
+
+```js
+// With default value
+null
 
 // With custom value
 {

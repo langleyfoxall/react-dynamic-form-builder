@@ -45,6 +45,22 @@ class DynamicFormBuilder extends React.Component {
         this.propagateChange = this.propagateChange.bind(this);
     }
 
+    static getDerivedStateFromProps(props, state) {
+        const { form: sValues } = state
+        const { values: pValues } = props
+
+        if (pValues) {
+            if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
+                return {
+                    ...state,
+                    form: { ...sValues, ...pValues },
+                };
+            }
+        }
+
+        return null
+    }
+
     applyFilter(event, filter) {
         switch (filter.constructor) {
             case(RegExp):
@@ -223,7 +239,7 @@ class DynamicFormBuilder extends React.Component {
             ), validationTimeout);
         }
 
-        let { form } = this.form;
+        let { form } = this.state;
 
         form[event.target.name] = value;
 
@@ -538,6 +554,7 @@ class DynamicFormBuilder extends React.Component {
 
 DynamicFormBuilder.defaultProps = {
     defaultValues: {},
+    values: null,
     classPrefix: 'rdf',
     defaultContainerClass: 'container',
     defaultInputClass: 'input',
@@ -554,11 +571,12 @@ DynamicFormBuilder.defaultProps = {
 };
 
 DynamicFormBuilder.propTypes = {
+    defaultValues: PropTypes.object,
+    values: PropTypes.object,
     defaultInputClass: PropTypes.string,
     defaultLabelClass: PropTypes.string,
     defaultContainerClass: PropTypes.string,
     defaultValidationErrorClass: PropTypes.string,
-    defaultValues: PropTypes.object,
     form: PropTypes.array.isRequired,
     submitButton: PropTypes.object,
     validationTimeout: PropTypes.number,
