@@ -11,8 +11,6 @@ require("core-js/modules/es7.symbol.async-iterator");
 
 require("core-js/modules/es6.symbol");
 
-require("core-js/modules/es6.array.iterator");
-
 require("core-js/modules/es6.object.keys");
 
 require("core-js/modules/es6.object.define-property");
@@ -20,6 +18,8 @@ require("core-js/modules/es6.object.define-property");
 require("core-js/modules/es6.object.create");
 
 require("core-js/modules/es6.object.set-prototype-of");
+
+require("core-js/modules/es6.array.iterator");
 
 require("core-js/modules/es6.array.map");
 
@@ -314,7 +314,7 @@ function (_React$Component) {
         }, validationTimeout);
       }
 
-      var form = this.form.form;
+      var form = this.state.form;
       form[event.target.name] = value;
       this.propagateChange(form, validationErrors);
     }
@@ -605,6 +605,22 @@ function (_React$Component) {
         return _react.default.createElement("p", null, "Error rendering form");
       }
     }
+  }], [{
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(props, state) {
+      var sValues = state.form;
+      var pValues = props.values;
+
+      if (pValues) {
+        if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
+          return _objectSpread({}, state, {
+            form: _objectSpread({}, sValues, pValues)
+          });
+        }
+      }
+
+      return null;
+    }
   }]);
 
   return DynamicFormBuilder;
@@ -612,6 +628,7 @@ function (_React$Component) {
 
 DynamicFormBuilder.defaultProps = {
   defaultValues: {},
+  values: null,
   classPrefix: 'rdf',
   defaultContainerClass: 'container',
   defaultInputClass: 'input',
@@ -627,11 +644,12 @@ DynamicFormBuilder.defaultProps = {
   validationTimeout: 1000
 };
 DynamicFormBuilder.propTypes = {
+  defaultValues: _propTypes.default.object,
+  values: _propTypes.default.object,
   defaultInputClass: _propTypes.default.string,
   defaultLabelClass: _propTypes.default.string,
   defaultContainerClass: _propTypes.default.string,
   defaultValidationErrorClass: _propTypes.default.string,
-  defaultValues: _propTypes.default.object,
   form: _propTypes.default.array.isRequired,
   submitButton: _propTypes.default.object,
   validationTimeout: _propTypes.default.number,
