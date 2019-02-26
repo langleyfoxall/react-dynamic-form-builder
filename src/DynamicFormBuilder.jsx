@@ -288,8 +288,11 @@ class DynamicFormBuilder extends React.Component {
     }
 
     getInputValidationError(inputName) {
-        const validationError = this.state.validation_errors[inputName];
-        const propError = this.props.formErrors[inputName];
+        const { validationErrors } = this.state;
+        const { formErrors } = this.props;
+      
+        const validationError = validationErrors[inputName];
+        const propError = formErrors[inputName];
         
         return (validationError && validationError !== true) ? validationError : propError;
     }
