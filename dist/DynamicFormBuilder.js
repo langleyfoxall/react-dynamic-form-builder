@@ -19,11 +19,7 @@ require("core-js/modules/es6.object.create");
 
 require("core-js/modules/es6.object.set-prototype-of");
 
-require("core-js/modules/es6.array.iterator");
-
 require("core-js/modules/es6.array.map");
-
-require("core-js/modules/web.dom.iterable");
 
 require("core-js/modules/es6.array.for-each");
 
@@ -34,6 +30,10 @@ require("core-js/modules/es6.function.name");
 require("core-js/modules/es6.array.filter");
 
 require("core-js/modules/es6.regexp.constructor");
+
+require("core-js/modules/web.dom.iterable");
+
+require("core-js/modules/es6.array.iterator");
 
 require("core-js/modules/es6.function.bind");
 
@@ -128,6 +128,22 @@ function (_React$Component) {
   }
 
   _createClass(DynamicFormBuilder, [{
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(_, state) {
+      var sValues = state.form;
+      var pValues = this.props.values;
+
+      if (pValues) {
+        if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
+          var form = _objectSpread({}, sValues, pValues);
+
+          this.propagateChange(form);
+        }
+      }
+
+      return null;
+    }
+  }, {
     key: "applyFilter",
     value: function applyFilter(event, filter) {
       switch (filter.constructor) {
@@ -268,7 +284,7 @@ function (_React$Component) {
 
       var onChange = this.props.onChange;
       this.setState({
-        form: form
+        form: _objectSpread({}, form)
       }, function () {
         if (onChange) {
           onChange({
@@ -604,22 +620,6 @@ function (_React$Component) {
         console.error(e);
         return _react.default.createElement("p", null, "Error rendering form");
       }
-    }
-  }], [{
-    key: "getDerivedStateFromProps",
-    value: function getDerivedStateFromProps(props, state) {
-      var sValues = state.form;
-      var pValues = props.values;
-
-      if (pValues) {
-        if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
-          return _objectSpread({}, state, {
-            form: _objectSpread({}, sValues, pValues)
-          });
-        }
-      }
-
-      return null;
     }
   }]);
 

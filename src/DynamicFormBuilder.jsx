@@ -45,16 +45,17 @@ class DynamicFormBuilder extends React.Component {
         this.propagateChange = this.propagateChange.bind(this);
     }
 
-    static getDerivedStateFromProps(props, state) {
+    componentDidUpdate(_, state) {
         const { form: sValues } = state
-        const { values: pValues } = props
+        const { values: pValues } = this.props
 
         if (pValues) {
             if (JSON.stringify(pValues) !== JSON.stringify(sValues)) {
-                return {
-                    ...state,
-                    form: { ...sValues, ...pValues },
+                const form = {
+                    ...sValues, ...pValues
                 };
+
+                this.propagateChange(form);
             }
         }
 
@@ -192,7 +193,7 @@ class DynamicFormBuilder extends React.Component {
         const { onChange } = this.props;
 
         this.setState(
-            { form },
+            { form: { ...form } },
             () => {
                 if (onChange) {
                     onChange({
