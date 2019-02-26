@@ -377,6 +377,15 @@ function (_React$Component) {
       return !invalid;
     }
   }, {
+    key: "getInputValidationError",
+    value: function getInputValidationError(inputName) {
+      var validationErrors = this.state.validationErrors;
+      var formErrors = this.props.formErrors;
+      var validationError = validationErrors[inputName];
+      var propError = formErrors[inputName];
+      return validationError && validationError !== true ? validationError : propError;
+    }
+  }, {
     key: "submitForm",
     value: function submitForm() {
       var form = this.state.form;
@@ -415,11 +424,11 @@ function (_React$Component) {
           value: form[input.name] || '',
           onChange: this.handleBlur.bind(this, input),
           onBlur: this.handleBlur.bind(this, input),
-          invalid: !!validationErrors[input.name] || undefined
+          invalid: !!this.getInputValidationError(input.name) || undefined
         });
       }
 
-      return input.render(input, form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), validationErrors[input.name], this.state);
+      return input.render(input, form[input.name] || '', this.handleInput.bind(this, input), this.handleBlur.bind(this, input), this.getInputValidationError(input.name), this.state);
     }
   }, {
     key: "renderInput",
@@ -530,7 +539,7 @@ function (_React$Component) {
           classPrefix = _this$props3.classPrefix,
           defaultValidationErrorClass = _this$props3.defaultValidationErrorClass,
           formErrors = _this$props3.formErrors;
-      var validationError = validationErrors[input.name] && validationErrors[input.name] !== true ? validationErrors[input.name] : formErrors[input.name];
+      var validationError = this.getInputValidationError(input.name);
 
       if (validationError) {
         return _react.default.createElement("p", {
