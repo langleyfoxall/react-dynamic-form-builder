@@ -192,15 +192,19 @@ class DynamicFormBuilder extends React.Component {
     propagateChange(form, validationErrors) {
         const { onChange } = this.props;
 
-        const callback = () => (
+        const callback = () => {
+            const [ valid, errors ] = this.validateForm()
+
+            validationErrors = validationErrors || errors
+
             onChange({
-                valid: this.validateForm(false),
+                valid,
                 data: {
                     form,
                     validationErrors,
                 },
             })
-        );
+        };
 
         this.setState(
             { form: { ...form } },
@@ -285,6 +289,7 @@ class DynamicFormBuilder extends React.Component {
                 this.validateInput(input.name, stateForm[input.name], input.validationRules);
 
             validationErrors = {
+                ...validationErrors,
                 ...validationError
             };
 
