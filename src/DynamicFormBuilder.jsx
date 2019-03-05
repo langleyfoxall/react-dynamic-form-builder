@@ -193,9 +193,9 @@ class DynamicFormBuilder extends React.Component {
         const { onChange } = this.props;
 
         const callback = () => {
-            const [ valid, errors ] = this.validateForm()
+            const [ valid, errors ] = this.validateForm();
 
-            validationErrors = validationErrors || errors
+            validationErrors = errors || validationErrors;
 
             onChange({
                 valid,

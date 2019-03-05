@@ -290,7 +290,7 @@ function (_React$Component) {
             valid = _this3$validateForm2[0],
             errors = _this3$validateForm2[1];
 
-        validationErrors = validationErrors || errors;
+        validationErrors = errors || validationErrors;
         onChange({
           valid: valid,
           data: {
