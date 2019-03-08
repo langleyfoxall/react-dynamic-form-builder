@@ -208,7 +208,9 @@ class DynamicFormBuilder extends React.Component {
 
         this.setState(
             { form: { ...form } },
-            callback
+            typeof onChange === 'function'
+                ? callback
+                : () => null
         );
     }
 
