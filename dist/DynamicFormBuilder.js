@@ -285,7 +285,7 @@ function (_React$Component) {
       var onChange = this.props.onChange;
 
       var callback = function callback() {
-        var _this3$validateForm = _this3.validateForm(),
+        var _this3$validateForm = _this3.validateForm(false),
             _this3$validateForm2 = _slicedToArray(_this3$validateForm, 2),
             valid = _this3$validateForm2[0],
             errors = _this3$validateForm2[1];
