@@ -306,7 +306,7 @@ class DynamicFormBuilder extends React.Component {
             return [ !invalid, validationErrors ];
         }
 
-        return !invalid;
+        return [ !invalid, validationErrors ];
     }
 
     getInputValidationError(inputName) {

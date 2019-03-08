@@ -397,7 +397,7 @@ function (_React$Component) {
         return [!invalid, validationErrors];
       }
 
-      return !invalid;
+      return [!invalid, validationErrors];
     }
   }, {
     key: "getInputValidationError",
