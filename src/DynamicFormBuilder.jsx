@@ -10,6 +10,7 @@ class DynamicFormBuilder extends React.Component {
         this.state = {
             form: { ...props.defaultValues },
             validationErrors: {},
+            randomisedFields: {},
         };
 
         this.filterRules = {
@@ -43,6 +44,37 @@ class DynamicFormBuilder extends React.Component {
         this.validateForm = this.validateForm.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.propagateChange = this.propagateChange.bind(this);
+    }
+
+    static flatInputs(entity) {
+        return (
+            entity
+                .flat()
+        )
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        const newRandomisedFields = { ...state.randomisedFields };
+        const inputs = DynamicFormBuilder.flatInputs(props.form);
+
+        inputs.forEach(({ name, autocomplete }) => {
+            if (autocomplete === false) {
+                if(!newRandomisedFields[name]) {
+                    newRandomisedFields[name] = (
+                        Math.random().toString(36).substring(7)
+                    );
+                }
+
+                return;
+            }
+
+            delete newRandomisedFields[name];
+        });
+
+        return {
+            ...state,
+            randomisedFields: newRandomisedFields
+        };
     }
 
     componentDidUpdate(prevProps) {
@@ -246,7 +278,7 @@ class DynamicFormBuilder extends React.Component {
 
         let { form } = this.state;
 
-        form[event.target.name] = value;
+        form[input.name] = value;
 
         this.propagateChange(form, validationErrors);
     }
@@ -267,8 +299,8 @@ class DynamicFormBuilder extends React.Component {
             validationErrors = this.applyValidation(event, input.validationRules);
         }
 
-        if (form[event.target.name] !== value) {
-            form[event.target.name] = value;
+        if (form[input.name] !== value) {
+            form[input.name] = value;
 
             this.propagateChange(form, validationErrors);
         }
@@ -374,7 +406,7 @@ class DynamicFormBuilder extends React.Component {
             return this.renderInputs(input);
         }
 
-        const { form, validationErrors } = this.state;
+        const { form, validationErrors, randomisedFields } = this.state;
 
         const {
             formErrors,
@@ -390,7 +422,7 @@ class DynamicFormBuilder extends React.Component {
 
         const props = {
             className: `${classPrefix}-${input.inputClass || defaultInputClass || ''} ${validationErrors[input.name] || formErrors[input.name] ? invalidInputClass : validationErrors[input.name] === false ? validInputClass : ''}`,
-            name: input.name,
+            name: randomisedFields[input.name] || input.name,
             value: form[input.name] || input.defaultValue || '',
             placeholder: input.placeholder,
             id: input.name,

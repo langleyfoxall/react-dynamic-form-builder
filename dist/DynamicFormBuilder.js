@@ -19,6 +19,10 @@ require("core-js/modules/es6.object.create");
 
 require("core-js/modules/es6.object.set-prototype-of");
 
+require("core-js/modules/es6.regexp.to-string");
+
+require("core-js/modules/es6.date.to-string");
+
 require("core-js/modules/es6.array.map");
 
 require("core-js/modules/es6.array.for-each");
@@ -73,11 +77,11 @@ function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) ===
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 var DynamicFormBuilder =
 /*#__PURE__*/
@@ -92,7 +96,8 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(DynamicFormBuilder).call(this, props));
     _this.state = {
       form: _objectSpread({}, props.defaultValues),
-      validationErrors: {}
+      validationErrors: {},
+      randomisedFields: {}
     };
     _this.filterRules = {
       numeric: function numeric(value) {
@@ -121,9 +126,9 @@ function (_React$Component) {
         return /^$|^\d+$|^\.\d+|^\d+\.\d+$/.test(value);
       }
     };
-    _this.validateForm = _this.validateForm.bind(_assertThisInitialized(_this));
-    _this.submitForm = _this.submitForm.bind(_assertThisInitialized(_this));
-    _this.propagateChange = _this.propagateChange.bind(_assertThisInitialized(_this));
+    _this.validateForm = _this.validateForm.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.submitForm = _this.submitForm.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.propagateChange = _this.propagateChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
@@ -338,7 +343,7 @@ function (_React$Component) {
       }
 
       var form = this.state.form;
-      form[event.target.name] = value;
+      form[input.name] = value;
       this.propagateChange(form, validationErrors);
     }
   }, {
@@ -357,8 +362,8 @@ function (_React$Component) {
         validationErrors = this.applyValidation(event, input.validationRules);
       }
 
-      if (form[event.target.name] !== value) {
-        form[event.target.name] = value;
+      if (form[input.name] !== value) {
+        form[input.name] = value;
         this.propagateChange(form, validationErrors);
       }
     }
@@ -462,7 +467,8 @@ function (_React$Component) {
 
       var _this$state2 = this.state,
           form = _this$state2.form,
-          validationErrors = _this$state2.validationErrors;
+          validationErrors = _this$state2.validationErrors,
+          randomisedFields = _this$state2.randomisedFields;
       var _this$props = this.props,
           formErrors = _this$props.formErrors,
           classPrefix = _this$props.classPrefix,
@@ -476,7 +482,7 @@ function (_React$Component) {
 
       var props = _objectSpread({
         className: "".concat(classPrefix, "-").concat(input.inputClass || defaultInputClass || '', " ").concat(validationErrors[input.name] || formErrors[input.name] ? invalidInputClass : validationErrors[input.name] === false ? validInputClass : ''),
-        name: input.name,
+        name: randomisedFields[input.name] || input.name,
         value: form[input.name] || input.defaultValue || '',
         placeholder: input.placeholder,
         id: input.name,
@@ -625,6 +631,35 @@ function (_React$Component) {
         console.error(e);
         return _react.default.createElement("p", null, "Error rendering form");
       }
+    }
+  }], [{
+    key: "flatInputs",
+    value: function flatInputs(entity) {
+      return entity.flat();
+    }
+  }, {
+    key: "getDerivedStateFromProps",
+    value: function getDerivedStateFromProps(props, state) {
+      var newRandomisedFields = _objectSpread({}, state.randomisedFields);
+
+      var inputs = DynamicFormBuilder.flatInputs(props.form);
+      inputs.forEach(function (_ref) {
+        var name = _ref.name,
+            autocomplete = _ref.autocomplete;
+
+        if (autocomplete === false) {
+          if (!newRandomisedFields[name]) {
+            newRandomisedFields[name] = Math.random().toString(36).substring(7);
+          }
+
+          return;
+        }
+
+        delete newRandomisedFields[name];
+      });
+      return _objectSpread({}, state, {
+        randomisedFields: newRandomisedFields
+      });
     }
   }]);
 
