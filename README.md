@@ -61,6 +61,7 @@
     * [`validationRules`](#validationRules)
     * [`transformer`](#transformer)
     * [`filter`](#filter)
+    * [`autocomplete`](#autocomplete)
 * [Addons](#addons)
   * [Make your own](#make-your-own)
 * [Similar Packages](#similar-packages)
@@ -178,7 +179,7 @@ The following props can be passed:
 * `validationTimeout` (number, default: `1000`)
 * `submitButton` (object, `{ text, className? }`)
 * `onSubmit` (function)
-* `loading` (bool, default `false`)
+* `loading` (boolean, default `false`)
 * `loadingElement` (element, default `null`)
 * `formErrors` (object, default: `{}`)
 * `form` (array)
@@ -387,7 +388,8 @@ Each `object` child needs at least a `name`, but can also become more complex an
 * `defaultOptionText` (string)
 * `validationRules` (string, string[], object, object[], RegExp, RegExp[], function, function[])
 * `transformer` (function{})
-* `filter` (string)
+* `filter` (string, function, RegExp)
+* `autocomplete` (boolean)
 
 
 #### `name`
@@ -669,6 +671,49 @@ It should be an object with the keys which define functions:
     transformer: {
         onChange: this.uppercaseWords
     }
+}
+```
+
+#### `filter`
+
+`filter` is used can specific characters should never get stored as a value. It
+can be a string, function or RegExp. The character will be ignored if `false` is returned from the filter.
+There are some pre-defined filters:
+
+* `numeric`
+* `decimal`
+
+```js
+// With pre-defined filter
+{
+    name: 'currency',
+    filter: 'decimal'
+}
+
+// With function
+{
+    name: 'currency',
+    filter: event => event.target.value === 'a' 
+}
+
+// With RegExp
+{
+    name: 'currency',
+    filter: /[A-Ba-b]/
+}
+```
+
+#### `autocomplete`
+
+`autocomplete` can be used in an attempt to counter user agent autofill. By setting
+`autocomplete` to `false` a random input name is generated, rather than using the `name`
+of the input object.
+
+```js
+// With custom value
+{
+    name: 'username',
+    autocomplete: false
 }
 ```
 
