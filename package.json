@@ -1,6 +1,6 @@
 {
   "name": "@langleyfoxall/react-dynamic-form-builder",
-  "version": "1.2.0",
+  "version": "1.2.0-rc.1",
   "description": "A form builder for React that allows input filters, transformers and validators as well as custom input rendering",
   "main": "dist/DynamicFormBuilder.js",
   "scripts": {
