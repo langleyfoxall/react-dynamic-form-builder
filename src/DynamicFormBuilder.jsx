@@ -34,7 +34,17 @@ class DynamicFormBuilder extends React.Component {
         };
 
         this.validationRules = {
-            required: value => !!value,
+            required: value => {
+                if (typeof value === 'object') {
+                    value = Object.keys(value);
+                }
+
+                if (typeof value === 'string' || Array.isArray(value)) {
+                    return !!value.length;
+                }
+
+                return value !== null && value !== undefined;
+            },
             email: value => (
                 /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value)
             ),
@@ -296,7 +306,11 @@ class DynamicFormBuilder extends React.Component {
 
         let { form } = this.state;
 
-        form[input.name] = value;
+        form[input.name] = (
+            value && typeof value === 'object'
+                ? value.value
+                : value
+        );
 
         this.propagateChange(form, validationErrors);
     }
