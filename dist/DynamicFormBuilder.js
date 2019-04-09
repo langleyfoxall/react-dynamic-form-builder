@@ -21,6 +21,10 @@ require("core-js/modules/es6.regexp.to-string");
 
 require("core-js/modules/es6.date.to-string");
 
+require("core-js/modules/es7.array.includes");
+
+require("core-js/modules/es6.string.includes");
+
 require("core-js/modules/es6.array.map");
 
 require("core-js/modules/es6.array.for-each");
@@ -96,6 +100,8 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(DynamicFormBuilder).call(this, props));
     _this.state = {
       form: _objectSpread({}, props.defaultValues),
+      inputs: _objectSpread({}, props.inputs),
+      canRender: [],
       validationErrors: {},
       randomisedFields: {}
     };
@@ -569,11 +575,9 @@ function (_React$Component) {
   }, {
     key: "renderValidationErrors",
     value: function renderValidationErrors(input) {
-      var validationErrors = this.state.validationErrors;
       var _this$props3 = this.props,
           classPrefix = _this$props3.classPrefix,
-          defaultValidationErrorClass = _this$props3.defaultValidationErrorClass,
-          formErrors = _this$props3.formErrors;
+          defaultValidationErrorClass = _this$props3.defaultValidationErrorClass;
       var validationError = this.getInputValidationError(input.name);
 
       if (validationError) {
@@ -617,9 +621,13 @@ function (_React$Component) {
     value: function renderInputs(inputs) {
       var _this7 = this;
 
+      var canRender = this.state.canRender;
       var _this$props6 = this.props,
           classPrefix = _this$props6.classPrefix,
           defaultContainerClass = _this$props6.defaultContainerClass;
+      inputs = inputs.filter(function (input) {
+        return canRender.includes(input.name) || input.constructor === Array;
+      });
       return _react.default.createElement(_react.Fragment, null, inputs.map(function (input, i) {
         var isArray = input.constructor === Array;
         var containerClass = isArray ? "".concat(classPrefix, "-row") : "".concat(classPrefix, "-").concat(input.containerClass || defaultContainerClass || '');
@@ -634,7 +642,8 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       try {
-        return _react.default.createElement(_react.Fragment, null, this.renderInputs(this.props.form), this.renderSubmitButton());
+        var inputs = this.state.inputs;
+        return _react.default.createElement(_react.Fragment, null, this.renderInputs(inputs), this.renderSubmitButton());
       } catch (e) {
         console.error(e);
         return _react.default.createElement("p", null, "Error rendering form");
@@ -647,13 +656,31 @@ function (_React$Component) {
     }
   }, {
     key: "getDerivedStateFromProps",
-    value: function getDerivedStateFromProps(props, state) {
-      var newRandomisedFields = _objectSpread({}, state.randomisedFields);
+    value: function getDerivedStateFromProps(_ref, state) {
+      var form = _ref.form;
+      var values = state.form,
+          errors = state.validationErrors,
+          randomisedFields = state.randomisedFields;
+      var inputs = DynamicFormBuilder.flatInputs(form);
 
-      var inputs = DynamicFormBuilder.flatInputs(props.form);
-      inputs.forEach(function (_ref) {
-        var name = _ref.name,
-            autocomplete = _ref.autocomplete;
+      var newRandomisedFields = _objectSpread({}, randomisedFields);
+
+      var newValues = _objectSpread({}, values);
+
+      var newErrors = _objectSpread({}, errors);
+
+      var canRender = [];
+      inputs.forEach(function (_ref2) {
+        var name = _ref2.name,
+            renderIf = _ref2.renderIf,
+            autocomplete = _ref2.autocomplete;
+
+        if (typeof renderIf === 'function' && !renderIf(state)) {
+          delete newValues[name];
+          delete newErrors[name];
+        } else {
+          canRender.push(name);
+        }
 
         if (autocomplete === false) {
           if (!newRandomisedFields[name]) {
@@ -666,6 +693,10 @@ function (_React$Component) {
         delete newRandomisedFields[name];
       });
       return _objectSpread({}, state, {
+        inputs: form,
+        canRender: canRender,
+        form: newValues,
+        validationErrors: newErrors,
         randomisedFields: newRandomisedFields
       });
     }

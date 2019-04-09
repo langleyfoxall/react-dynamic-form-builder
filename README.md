@@ -62,6 +62,7 @@
     * [`transformer`](#transformer)
     * [`filter`](#filter)
     * [`autocomplete`](#autocomplete)
+    * [`renderIf`](#renderIf)
 * [Addons](#addons)
   * [Make your own](#make-your-own)
 * [Similar Packages](#similar-packages)
@@ -390,6 +391,7 @@ Each `object` child needs at least a `name`, but can also become more complex an
 * `transformer` (function{})
 * `filter` (string, function, RegExp)
 * `autocomplete` (boolean)
+* `renderIf` (function)
 
 
 #### `name`
@@ -714,6 +716,23 @@ of the input object.
 {
     name: 'username',
     autocomplete: false
+}
+```
+
+#### `renderIf`
+
+`renderIf` can be used to render inputs based on the state of the form. When an input
+is hidden from the form the `validationErrors` and form value is reset.
+
+```js
+// With custom value
+{
+    name: 'last_name',
+
+    // Render if `first_name` has a truthy value
+    renderIf: ({ form }) => (
+        !!form.first_name
+    )
 }
 ```
 
