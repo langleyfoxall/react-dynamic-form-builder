@@ -134,10 +134,10 @@ function (_React$Component) {
         return value !== null && value !== undefined;
       },
       email: function email(value) {
-        return /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
+        return !value || /^$|^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value);
       },
       decimal: function decimal(value) {
-        return /^$|^\d+$|^\.\d+|^\d+\.\d+$/.test(value);
+        return !value || /^$|^\d+$|^\.\d+|^\d+\.\d+$/.test(value);
       }
     };
     _this.validateForm = _this.validateForm.bind(_assertThisInitialized(_assertThisInitialized(_this)));
