@@ -307,7 +307,7 @@ class DynamicFormBuilder extends React.Component {
         let { form } = this.state;
 
         form[input.name] = (
-            value && typeof value === 'object'
+            value && typeof value === 'object' && !Array.isArray(value)
                 ? value.value
                 : value
         );
