@@ -357,7 +357,7 @@ function (_React$Component) {
       }
 
       var form = this.state.form;
-      form[input.name] = value && _typeof(value) === 'object' ? value.value : value;
+      form[input.name] = value && _typeof(value) === 'object' && !Array.isArray(value) ? value.value : value;
       this.propagateChange(form, validationErrors);
     }
   }, {
