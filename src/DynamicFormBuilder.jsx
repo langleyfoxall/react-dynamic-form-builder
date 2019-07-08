@@ -237,6 +237,7 @@ class DynamicFormBuilder extends React.Component {
             this.validateInput(event.target.name, event.target.value, validation);
 
         validationErrors = {
+            ...validationErrors,
             ...validationError,
         };
 
