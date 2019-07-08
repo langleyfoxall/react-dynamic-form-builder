@@ -286,7 +286,7 @@ function (_React$Component) {
           valid = _this$validateInput2[0],
           validationError = _this$validateInput2[1];
 
-      validationErrors = _objectSpread({}, validationError);
+      validationErrors = _objectSpread({}, validationErrors, validationError);
 
       if (onlyValid && valid || !onlyValid) {
         this.setState({
