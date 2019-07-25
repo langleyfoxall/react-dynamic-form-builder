@@ -652,7 +652,7 @@ function (_React$Component) {
   }], [{
     key: "flatInputs",
     value: function flatInputs(entity) {
-      return entity.flat();
+      return (0, _flatten.default)(entity);
     }
   }, {
     key: "getDerivedStateFromProps",

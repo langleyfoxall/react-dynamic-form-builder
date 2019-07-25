@@ -59,10 +59,7 @@ class DynamicFormBuilder extends React.Component {
     }
 
     static flatInputs(entity) {
-        return (
-            entity
-                .flat()
-        )
+        return flatten(entity);
     }
 
     static getDerivedStateFromProps({ form }, state) {
